@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:;">
   <title>Swift Trip Planner | Swift Strips India Pvt. Ltd.</title>
 
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- Google Fonts: Inter & JetBrains Mono with font-display: swap -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
 
   <!-- Mapbox GL JS v3 CDN -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
 
   <!-- Leaflet Fallback CDN -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <!-- Chart.js CDN -->
@@ -25,53 +30,92 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
   <style>
+    /* ==========================================================================
+       DESIGN TOKENS (B1)
+       ========================================================================== */
     :root {
       --brand-navy: #0A192F;
       --brand-blue: #0284C7;
       --brand-accent: #2563EB;
       --brand-saffron: #F97316;
       --brand-green: #10B981;
-      
+
       --bg: #F8FAFC;
-      --card-bg: #FFFFFF;
-      --card-border: #E2E8F0;
-      --card-subtle: #F1F5F9;
+      --surface-1: #FFFFFF;
+      --surface-2: #F1F5F9;
+      --border: #E2E8F0;
       --text: #0F172A;
       --text-muted: #64748B;
-      
+
       --urgent: #EF4444;
       --urgent-light: #FEE2E2;
       --warning: #F59E0B;
       --warning-light: #FEF3C7;
       --success: #10B981;
       --success-light: #D1FAE5;
-      
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 10px 25px -5px rgba(10,25,47,0.08), 0 8px 10px -6px rgba(10,25,47,0.04);
-      --shadow-lg: 0 20px 35px -10px rgba(10,25,47,0.14);
-      
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 10px 25px -5px rgba(10, 25, 47, 0.08), 0 8px 10px -6px rgba(10, 25, 47, 0.04);
+      --shadow-lg: 0 20px 35px -10px rgba(10, 25, 47, 0.14);
+      --shadow-drawer: -10px 0 30px rgba(0, 0, 0, 0.25);
+
       --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
+      --radius-pill: 999px;
     }
 
     [data-theme="dark"] {
       --bg: #030712;
-      --card-bg: #0F172A;
-      --card-border: #1E293B;
-      --card-subtle: #131E33;
+      --surface-1: #0F172A;
+      --surface-2: #131E33;
+      --border: #1E293B;
       --text: #F8FAFC;
       --text-muted: #94A3B8;
-      
+
       --brand-navy: #0F172A;
       --brand-blue: #38BDF8;
       --brand-accent: #60A5FA;
-      
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
-      --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.5);
-      --shadow-lg: 0 20px 35px -10px rgba(0,0,0,0.65);
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 20px 35px -10px rgba(0, 0, 0, 0.65);
+      --shadow-drawer: -10px 0 35px rgba(0, 0, 0, 0.6);
+    }
+
+    /* OUTDOOR HIGH CONTRAST (B4) */
+    body.high-contrast {
+      --bg: #FFFFFF;
+      --surface-1: #FFFFFF;
+      --surface-2: #E2E8F0;
+      --border: #000000;
+      --text: #000000;
+      --text-muted: #1E293B;
+      --brand-blue: #005A9C;
+      --shadow-sm: none;
+      --shadow-md: none;
+      --shadow-lg: none;
+    }
+
+    body.high-contrast * {
+      border-color: #000000 !important;
+      font-weight: 600;
+    }
+
+    /* REDUCED MOTION (E) */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      ::before,
+      ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     * {
@@ -87,16 +131,49 @@
       color: var(--text);
       line-height: 1.5;
       letter-spacing: -0.011em;
-      transition: background-color 0.25s ease, color 0.25s ease;
+      transition: background-color 0.2s ease, color 0.2s ease;
       overflow-x: hidden;
-      padding-bottom: 50px;
+      padding-bottom: env(safe-area-inset-bottom, 70px);
       -webkit-font-smoothing: antialiased;
     }
 
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ACCESSIBILITY: SKIP LINK & FOCUS (E) */
+    .skip-to-content {
+      position: absolute;
+      top: -100px;
+      left: 16px;
+      background: var(--brand-blue);
+      color: #FFFFFF;
+      padding: 10px 18px;
+      z-index: 9999;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      text-decoration: none;
+      transition: top 0.2s ease;
+    }
+
+    .skip-to-content:focus {
+      top: 16px;
+      outline: 3px solid var(--brand-saffron);
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--brand-blue);
+      outline-offset: 2px;
+    }
+
+    /* HEADER */
     header {
-      background: rgba(255, 255, 255, 0.85);
-      border-bottom: 1px solid var(--card-border);
-      padding: 12px 32px;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -109,26 +186,26 @@
     }
 
     [data-theme="dark"] header {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.9);
     }
 
     .brand-wrap {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .brand-logo-frame {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background: #FFFFFF;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 2px;
-      border: 1.5px solid var(--card-border);
+      border: 1.5px solid var(--border);
       overflow: hidden;
       flex-shrink: 0;
     }
@@ -141,10 +218,10 @@
     }
 
     .brand-titles h1 {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
       color: var(--text);
       display: flex;
       align-items: center;
@@ -156,22 +233,51 @@
       font-weight: 800;
       background: rgba(249, 115, 22, 0.12);
       color: var(--brand-saffron);
-      padding: 2px 7px;
+      padding: 2px 6px;
       border-radius: 4px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
     .brand-titles p {
-      font-size: 11.5px;
+      font-size: 10.5px;
       font-weight: 500;
       color: var(--text-muted);
+    }
+
+    .sticky-mini-indicator {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-2);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .sticky-mini-indicator.visible {
+      display: flex;
     }
 
     .header-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+    }
+
+    .personalize-selector {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      min-height: 44px;
     }
 
     .live-pill {
@@ -180,10 +286,10 @@
       gap: 8px;
       font-size: 12px;
       font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: var(--card-subtle);
-      border: 1px solid var(--card-border);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
       color: var(--text);
     }
 
@@ -196,65 +302,135 @@
       animation: pulseGreen 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
     }
 
+    .live-pulse.stale {
+      background: var(--warning);
+      box-shadow: none;
+      animation: none;
+    }
+
     @keyframes pulseGreen {
-      to { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      to {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+      }
     }
 
     .btn-icon {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--surface-1);
+      border: 1px solid var(--border);
       color: var(--text);
-      width: 38px;
-      height: 38px;
+      min-width: 44px;
+      min-height: 44px;
+      width: 44px;
+      height: 44px;
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 17px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-size: 18px;
+      transition: all 0.15s ease;
     }
 
     .btn-icon:hover {
-      background: var(--card-subtle);
+      background: var(--surface-2);
       border-color: var(--brand-blue);
       color: var(--brand-blue);
-      transform: translateY(-1px);
     }
 
+    /* "NEEDS ATTENTION" STRIP (C1) */
+    .attention-strip {
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .attention-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      min-height: 36px;
+    }
+
+    .attention-urgent {
+      background: var(--urgent-light);
+      color: var(--urgent);
+      border-color: #FCA5A5;
+    }
+
+    .attention-warning {
+      background: var(--warning-light);
+      color: #B45309;
+      border-color: #FCD34D;
+    }
+
+    .attention-all-clear {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* APP SHELL (D) */
     .app-shell {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 24px 32px;
+      padding: 20px 24px;
       display: grid;
-      gap: 24px;
+      gap: 20px;
     }
 
+    .my-trip-card {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.12) 0%, rgba(16, 185, 129, 0.1) 100%);
+      border: 1.5px solid var(--brand-blue);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* HERO BANNER (A1) */
     .hero-banner {
       background: radial-gradient(120% 120% at 85% 10%, #1E3A8A 0%, #0F172A 60%, #030712 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-lg);
-      padding: 30px 36px;
+      padding: 26px 30px;
       color: #FFFFFF;
       box-shadow: var(--shadow-lg);
       position: relative;
       overflow: hidden;
       display: grid;
-      grid-template-columns: 1fr 310px;
-      gap: 24px;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
       align-items: center;
+      min-height: 180px;
     }
 
     .hero-meta-top {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 8px;
+      margin-bottom: 10px;
       flex-wrap: wrap;
     }
 
     .badge-pill {
-      padding: 5px 12px;
+      padding: 4px 9px;
       border-radius: 6px;
       font-size: 11px;
       font-weight: 700;
@@ -262,82 +438,110 @@
       text-transform: uppercase;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
-    .badge-urgent { background: #EF4444; color: #FFFFFF; }
-    .badge-doc { background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); }
+    .badge-urgent {
+      background: #EF4444;
+      color: #FFFFFF;
+    }
+
+    .badge-doc {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+    }
+
+    .badge-departing-now {
+      background: #F59E0B;
+      color: #0F172A;
+      animation: pulseDeparting 1.4s infinite ease-in-out;
+    }
+
+    @keyframes pulseDeparting {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+      }
+    }
 
     .hero-destination-title {
-      font-size: 34px;
+      font-size: clamp(22px, 3vw, 32px);
       font-weight: 800;
       letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: 14px;
+      line-height: 1.15;
+      margin-bottom: 10px;
     }
 
     .hero-traveller-chip {
       background: #FFFFFF;
       color: #0F172A;
       font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 13.5px;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      gap: 6px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     }
 
     .hero-train-strip {
       display: flex;
       align-items: center;
-      gap: 16px;
-      font-size: 14px;
-      opacity: 0.94;
+      gap: 12px;
+      font-size: 13px;
+      opacity: 0.95;
       flex-wrap: wrap;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .countdown-pod {
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: var(--radius-md);
-      padding: 22px 24px;
+      padding: 20px 22px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
     .countdown-eyebrow {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: #94A3B8;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .countdown-numbers {
       font-family: var(--font-mono);
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 700;
-      letter-spacing: -0.05em;
+      letter-spacing: -0.04em;
       color: #38BDF8;
       text-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
     }
 
     .countdown-footnote {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
       color: #34D399;
-      margin-top: 6px;
+      margin-top: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
     }
 
+    /* KPI ROW (A2) */
     .kpi-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -345,16 +549,16 @@
     }
 
     .kpi-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--surface-1);
+      border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 20px 22px;
+      padding: 16px 18px;
       box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.18s ease;
     }
 
     .kpi-card:hover {
@@ -365,67 +569,92 @@
 
     .kpi-icon-glow {
       position: absolute;
-      top: 18px;
-      right: 20px;
-      font-size: 24px;
+      top: 16px;
+      right: 18px;
+      font-size: 22px;
       color: var(--brand-blue);
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     .kpi-label {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .kpi-number {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
       letter-spacing: -0.03em;
       line-height: 1;
       color: var(--text);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .kpi-subtext {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
+    .status-chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .chip-green {
+      background: var(--success);
+    }
+
+    .chip-amber {
+      background: var(--warning);
+    }
+
+    .chip-red {
+      background: var(--urgent);
+    }
+
+    /* WORKSPACE GRID */
     .workspace-grid {
       display: grid;
-      grid-template-columns: 1fr 400px;
-      gap: 24px;
+      grid-template-columns: 1fr 390px;
+      gap: 20px;
     }
 
     .map-card-wrapper {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--surface-1);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
-      height: 580px;
+      height: 560px;
       position: relative;
     }
 
     .map-header-bar {
-      padding: 14px 22px;
-      border-bottom: 1px solid var(--card-border);
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--card-bg);
+      background: var(--surface-1);
       z-index: 10;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .map-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       letter-spacing: -0.02em;
       display: flex;
@@ -433,25 +662,30 @@
       gap: 8px;
     }
 
-    .track-legend {
+    .map-controls-group {
       display: flex;
       align-items: center;
-      gap: 16px;
-      font-size: 11px;
+      gap: 8px;
+    }
+
+    .map-tool-pill {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 11.5px;
       font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .legend-item {
+      color: var(--text);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      min-height: 36px;
     }
 
-    .legend-line {
-      width: 20px;
-      height: 4px;
-      border-radius: 2px;
+    .map-tool-pill:hover {
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
     }
 
     #map {
@@ -467,9 +701,9 @@
       color: #0F172A;
       font-size: 11px;
       font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 999px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       white-space: nowrap;
       display: flex;
       align-items: center;
@@ -479,147 +713,120 @@
       transition: all 0.15s ease;
     }
 
-    .gmap-station-pill:hover {
-      transform: translate(-50%, -105%) scale(1.08);
-      z-index: 9999;
-    }
-
-    .gmap-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-
-    .map-overlay-tools {
-      position: absolute;
-      top: 70px;
-      right: 16px;
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .map-tool-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text);
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: var(--shadow-md);
-      transition: all 0.15s ease;
-    }
-
-    .map-tool-btn:hover {
-      background: var(--card-subtle);
-      color: var(--brand-blue);
-    }
-
-    .side-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
+    /* ROTATION WITH NEXT 3 & FAIRNESS (C10) */
     .content-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--surface-1);
+      border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 22px;
+      padding: 18px;
       box-shadow: var(--shadow-sm);
     }
 
     .card-heading {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       letter-spacing: -0.02em;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .rotation-card-inner {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(249, 115, 22, 0.06) 100%);
-      border: 1px solid rgba(2, 132, 199, 0.2);
+    .rotation-queue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .rotation-person-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
       border-radius: var(--radius-sm);
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      background: var(--surface-2);
+      font-size: 12.5px;
     }
 
-    .rotation-avatar-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+    .rotation-load-bar-wrap {
+      width: 100px;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .rotation-load-bar {
+      height: 100%;
       background: var(--brand-blue);
-      color: #FFFFFF;
-      font-weight: 800;
-      font-size: 17px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+      border-radius: 3px;
     }
 
+    /* TODAY / TOMORROW LANE (A6) */
     .lane-scroll-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      max-height: 420px;
+      gap: 10px;
+      max-height: 380px;
       overflow-y: auto;
       padding-right: 4px;
     }
 
+    .lane-group-heading {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin: 8px 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .trip-mini-item {
-      background: var(--card-subtle);
-      border: 1px solid var(--card-border);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
       border-left: 4px solid var(--brand-blue);
       border-radius: var(--radius-sm);
-      padding: 14px;
+      padding: 11px 13px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.15s ease;
     }
 
     .trip-mini-item:hover {
       transform: translateX(3px);
+      background: var(--surface-1);
       box-shadow: var(--shadow-sm);
-      border-color: var(--brand-blue);
-      background: var(--card-bg);
     }
 
     .trip-mini-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .trip-mini-dest {
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 700;
-      letter-spacing: -0.01em;
     }
 
     .trip-mini-meta {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
+    /* MULTI-VIEW CALENDAR (C7) */
     .calendar-container {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--surface-1);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 26px;
+      padding: 22px;
       box-shadow: var(--shadow-sm);
     }
 
@@ -627,19 +834,45 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 12px;
+    }
+
+    .cal-view-selector {
+      display: flex;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+    }
+
+    .cal-view-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .cal-view-btn.active {
+      background: var(--surface-1);
+      color: var(--brand-blue);
+      box-shadow: var(--shadow-sm);
     }
 
     .cal-filter-tabs {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: var(--card-subtle);
-      padding: 4px;
+      background: var(--surface-2);
+      padding: 3px;
       border-radius: var(--radius-sm);
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
     }
 
     .cal-tab-btn {
@@ -648,22 +881,36 @@
       color: var(--text-muted);
       font-size: 12px;
       font-weight: 600;
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      min-height: 36px;
     }
 
     .cal-tab-btn.active {
-      background: var(--card-bg);
+      background: var(--surface-1);
       color: var(--brand-blue);
       box-shadow: var(--shadow-sm);
+    }
+
+    .cal-active-filter-chip {
+      background: rgba(2, 132, 199, 0.12);
+      border: 1px solid var(--brand-blue);
+      color: var(--brand-blue);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
     }
 
     .cal-grid-layout {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
 
     .cal-day-header-cell {
@@ -671,37 +918,39 @@
       font-size: 11px;
       font-weight: 700;
       color: var(--text-muted);
-      padding: 10px 0;
+      padding: 8px 0;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      background: var(--card-subtle);
+      background: var(--surface-2);
       border-radius: 6px;
     }
 
     .cal-date-cell {
-      min-height: 110px;
-      border: 1px solid var(--card-border);
+      min-height: 100px;
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 10px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      background: var(--card-bg);
+      gap: 4px;
+      background: var(--surface-1);
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: all 0.15s ease;
       position: relative;
     }
 
     .cal-date-cell:hover {
-      background: var(--card-subtle);
+      background: var(--surface-2);
       border-color: var(--brand-blue);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-sm);
     }
 
     .cal-date-cell.today-cell {
       border: 2px solid var(--brand-blue);
       background: rgba(2, 132, 199, 0.04);
+    }
+
+    .cal-date-cell.selected-day-cell {
+      outline: 2px solid var(--brand-saffron);
     }
 
     .cal-cell-header {
@@ -713,46 +962,90 @@
 
     .cal-day-num {
       font-weight: 700;
-      font-size: 13.5px;
+      font-size: 13px;
     }
 
     .cal-chip-tag {
-      padding: 5px 8px;
-      border-radius: 6px;
-      font-size: 10.5px;
+      padding: 3px 6px;
+      border-radius: 5px;
+      font-size: 10px;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       color: #FFFFFF;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.14);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
       display: flex;
       align-items: center;
-      gap: 5px;
-      transition: transform 0.15s ease;
+      gap: 4px;
     }
 
-    .cal-chip-tag:hover {
-      transform: scale(1.03);
+    /* AGENDA VIEW (C7) */
+    .cal-agenda-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
+    .agenda-day-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .agenda-day-header {
+      background: var(--surface-2);
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .agenda-trips-list {
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--surface-1);
+    }
+
+    /* CHARTS & ACCESSIBILITY DETAILS (E) */
     .charts-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 24px;
+      gap: 20px;
     }
 
+    details.chart-data-table {
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    details.chart-data-table summary {
+      cursor: pointer;
+      color: var(--brand-blue);
+      font-weight: 600;
+      padding: 4px 0;
+    }
+
+    details.chart-data-table table {
+      margin-top: 6px;
+    }
+
+    /* TRIPS TABLE & STACKED CARDS (C8, D) */
     .table-container-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--surface-1);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow-sm);
     }
 
     .table-filter-bar {
-      padding: 16px 22px;
-      border-bottom: 1px solid var(--card-border);
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 12px;
@@ -760,19 +1053,29 @@
     }
 
     .input-control {
-      background: var(--card-subtle);
-      border: 1px solid var(--card-border);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
       color: var(--text);
-      padding: 9px 14px;
+      padding: 8px 12px;
       border-radius: var(--radius-sm);
       font-size: 13px;
       outline: none;
       font-family: var(--font-main);
+      min-height: 44px;
     }
 
     .input-control:focus {
       border-color: var(--brand-blue);
-      background: var(--card-bg);
+      background: var(--surface-1);
+    }
+
+    .active-filters-chips-tray {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-top: 6px;
     }
 
     table {
@@ -783,327 +1086,612 @@
     }
 
     th {
-      background: var(--card-subtle);
+      background: var(--surface-2);
       color: var(--text-muted);
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      padding: 13px 18px;
-      border-bottom: 1px solid var(--card-border);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th:hover {
+      color: var(--text);
     }
 
     td {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--card-border);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
       vertical-align: middle;
     }
 
     tr:hover td {
-      background: var(--card-subtle);
+      background: var(--surface-2);
     }
 
-    .modal-veil {
+    /* MOBILE STACKED CARDS (<768px) */
+    @media (max-width: 768px) {
+      .table-desktop-view {
+        display: none;
+      }
+
+      .table-mobile-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 14px;
+      }
+
+      .trip-card-mobile {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .table-mobile-cards {
+        display: none;
+      }
+    }
+
+    /* TICKET BADGES (A7) */
+    .badge-ticket-booked {
+      background: #D1FAE5;
+      color: #065F46;
+      font-weight: 700;
+      border: 1px solid #10B981;
+    }
+
+    .badge-ticket-rac {
+      background: #FEF3C7;
+      color: #92400E;
+      font-weight: 700;
+      border: 1px solid #F59E0B;
+    }
+
+    .badge-ticket-not-booked {
+      background: #F1F5F9;
+      color: #475569;
+      font-weight: 600;
+      border: 1px solid #CBD5E1;
+    }
+
+    .badge-ticket-urgent-unbooked {
+      background: #FEE2E2;
+      color: #991B1B;
+      font-weight: 800;
+      border: 1.5px solid #EF4444;
+      animation: pulseAlert 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulseAlert {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.75;
+      }
+    }
+
+    .badge-ticket-cancelled {
+      text-decoration: line-through;
+      color: #94A3B8;
+      background: #F8FAFC;
+    }
+
+    /* DRAWER & BOTTOM SHEET (C4) */
+    .drawer-veil {
       position: fixed;
       inset: 0;
-      background: rgba(10, 25, 47, 0.7);
-      backdrop-filter: blur(8px);
+      background: rgba(10, 25, 47, 0.6);
+      backdrop-filter: blur(6px);
       z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.25s ease;
+      display: flex;
+      justify-content: flex-end;
     }
 
-    .modal-veil.open {
+    .drawer-veil.open {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .modal-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
+    .drawer-panel {
+      background: var(--surface-1);
       width: 100%;
-      max-width: 620px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: var(--shadow-lg);
-      padding: 30px;
-      position: relative;
+      max-width: 460px;
+      height: 100%;
+      box-shadow: var(--shadow-drawer);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
     }
 
-    .modal-close-btn {
+    .drawer-veil.open .drawer-panel {
+      transform: translateX(0);
+    }
+
+    @media (max-width: 768px) {
+      .drawer-veil {
+        justify-content: center;
+        align-items: flex-end;
+      }
+
+      .drawer-panel {
+        max-width: 100%;
+        height: auto;
+        max-height: 85vh;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+      }
+
+      .drawer-veil.open .drawer-panel {
+        transform: translateY(0);
+      }
+    }
+
+    .drawer-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .stepper-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      margin-left: 12px;
+    }
+
+    .stepper-timeline::before {
+      content: '';
       position: absolute;
-      top: 20px;
-      right: 20px;
-      background: var(--card-subtle);
-      border: 1px solid var(--card-border);
-      width: 34px;
-      height: 34px;
+      top: 10px;
+      bottom: 10px;
+      left: 11px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-dot {
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
+      background: var(--surface-1);
+      border: 2px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      cursor: pointer;
+      font-size: 11px;
       color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .step-item.completed .step-dot {
+      background: var(--brand-green);
+      border-color: var(--brand-green);
+      color: #FFFFFF;
+    }
+
+    .step-item.current .step-dot {
+      background: var(--brand-blue);
+      border-color: var(--brand-blue);
+      color: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
+    }
+
+    .step-info {
+      font-size: 13px;
+    }
+
+    .step-title {
+      font-weight: 700;
+    }
+
+    .step-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .drawer-actions-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-action-tool {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      min-height: 44px;
+    }
+
+    .btn-action-tool:hover {
+      background: var(--surface-1);
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
+    }
+
+    .wa-request-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1500;
+      background: #25D366;
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      min-height: 44px;
     }
 
     .toast-tray {
       position: fixed;
       bottom: 24px;
-      right: 24px;
+      left: 24px;
       z-index: 3000;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .toast-msg {
       background: #0F172A;
       color: #FFFFFF;
-      padding: 14px 20px;
+      padding: 12px 18px;
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-lg);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       border-left: 4px solid var(--brand-saffron);
-      animation: slideInToast 0.25s ease;
+      animation: slideInToast 0.2s ease;
     }
 
-    @keyframes slideInToast {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
+    /* PRINT STYLESHEET (C11) */
+    @media print {
+      body {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        padding-bottom: 0 !important;
+      }
 
-    @media (max-width: 1024px) {
-      .workspace-grid { grid-template-columns: 1fr; }
-      .hero-banner { grid-template-columns: 1fr; }
-      .countdown-pod { text-align: left; }
-    }
+      header,
+      .attention-strip,
+      .map-card-wrapper,
+      .cal-controls,
+      .table-filter-bar,
+      .btn-icon,
+      .btn-action-tool,
+      .wa-request-fab,
+      .toast-tray,
+      .drawer-veil {
+        display: none !important;
+      }
 
-    @media (max-width: 768px) {
-      header { padding: 10px 16px; }
-      .brand-titles h1 { font-size: 16px; }
-      .brand-titles p { font-size: 10.5px; }
-      .live-pill span { display: none; }
-      .app-shell { padding: 14px; gap: 16px; }
-      .hero-banner { padding: 20px 18px; grid-template-columns: 1fr; gap: 18px; }
-      .hero-destination-title { font-size: 26px; }
-      .hero-train-strip { font-size: 13px; gap: 10px; }
-      .countdown-pod { padding: 16px 18px; text-align: left; display: flex; align-items: center; justify-content: space-between; }
-      .countdown-numbers { font-size: 26px; }
-      .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .kpi-card { padding: 14px 16px; }
-      .kpi-number { font-size: 24px; }
-      .map-card-wrapper { height: 420px; }
-      .map-header-bar { padding: 12px 16px; flex-direction: column; align-items: flex-start; gap: 8px; }
-      .calendar-container { padding: 16px 14px; }
-      .cal-controls { flex-direction: column; align-items: flex-start; }
-      .cal-filter-tabs { width: 100%; overflow-x: auto; }
-      .cal-date-cell { min-height: 72px; padding: 6px; }
-      .cal-chip-tag span { display: none; }
-      .cal-chip-tag { justify-content: center; padding: 3px; }
-      .table-filter-bar { padding: 12px; gap: 8px; }
-      .input-control { width: 100%; min-width: 100% !important; }
-    }
+      .app-shell {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
 
-    @media (max-width: 480px) {
-      .kpi-row { grid-template-columns: 1fr; }
-      .map-card-wrapper { height: 350px; }
+      .hero-banner {
+        background: none !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+        box-shadow: none !important;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #000000 !important;
+        color: #000000 !important;
+      }
     }
   </style>
 </head>
+
 <body data-theme="light">
 
-  <header>
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+  <!-- ARIA LIVE REGION (E) -->
+  <div id="srAnnouncer" aria-live="polite" class="sr-only"
+    style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(1px,1px,1px,1px);"></div>
+
+  <header role="banner">
     <div class="brand-wrap">
       <div class="brand-logo-frame" title="Swift Strips India Pvt. Ltd. (SLTT Group)">
-        <img src="swift_logo.png" alt="Swift Strips India Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='logo.png';">
+        <img src="swift_logo.png" alt="Swift Strips India Logo" class="brand-logo-img"
+          onerror="this.onerror=null; this.src='logo.png';">
       </div>
-
       <div class="brand-titles">
         <h1>Swift Strips India <span class="tag-group-logo">SLTT Group</span></h1>
-        <p>Document & Consignment Travel Planner • Jamshedpur Plant</p>
+        <p>Document & Rail Trip Dispatch • Jamshedpur Plant</p>
       </div>
     </div>
 
+    <!-- STICKY MINI BAR (C9) -->
+    <div class="sticky-mini-indicator" id="stickyMiniBar" aria-hidden="true">
+      <i class="ph-bold ph-train" style="color:var(--brand-blue);"></i>
+      <span id="stickyMiniCountdown">Next: --:--:--</span>
+      <span id="stickyMiniAlerts" class="badge-pill attention-urgent" style="display:none;">0 Alerts</span>
+    </div>
+
     <div class="header-right">
-      <div class="live-pill">
-        <div class="live-pulse"></div>
-        <span id="syncStatus">Live (Syncing)</span>
+      <select class="personalize-selector" id="personalizeSelector" aria-label="Select personal staff view">
+        <option value="">I am: All Staff</option>
+      </select>
+
+      <div class="live-pill" id="livePill">
+        <div class="live-pulse" id="livePulse"></div>
+        <span id="syncStatus">Live</span>
       </div>
-      <button class="btn-icon" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+
+      <button class="btn-icon" id="contrastBtn" aria-label="Toggle outdoor high contrast mode"
+        title="Outdoor High Contrast">
+        <i class="ph-bold ph-sun-dim"></i>
+      </button>
+
+      <button class="btn-icon" id="themeBtn" aria-label="Toggle theme" title="Toggle Theme">
         <i class="ph-bold ph-moon" id="themeIcon"></i>
       </button>
-      <button class="btn-icon" onclick="fetchData(true)" title="Force Refresh">
+
+      <button class="btn-icon" id="refreshBtn" aria-label="Force refresh data" title="Force Refresh">
         <i class="ph-bold ph-arrows-clockwise"></i>
       </button>
     </div>
   </header>
 
-  <div class="app-shell">
-
-    <div class="hero-banner">
-      <div>
-        <div class="hero-meta-top">
-          <span class="badge-pill badge-urgent" id="heroPriority"><i class="ph-bold ph-lightning"></i> URGENT</span>
-          <span class="badge-pill badge-doc" id="heroTripId"><i class="ph-bold ph-ticket"></i> TRP-2026-11-001</span>
-          <span class="badge-pill badge-doc" id="heroDocType"><i class="ph-bold ph-file-text"></i> Customs Clearance</span>
-        </div>
-        <div class="hero-destination-title" id="heroDestination">
-          Kolkata Port (Howrah)
-        </div>
-        <div class="hero-train-strip">
-          <span class="hero-traveller-chip" id="heroTraveller">
-            <i class="ph-fill ph-user-circle" style="color:var(--brand-blue); font-size:18px;"></i> Mohit Saw
-          </span>
-          <span id="heroTrainDetails"><i class="ph-bold ph-train-simple"></i> 12814 Steel Express • Dep: 06:10 IST</span>
-          <span id="heroTicketBadge" class="badge-pill" style="background:#10B981; color:#fff;">TICKET BOOKED</span>
-        </div>
-      </div>
-
-      <div class="countdown-pod">
-        <div class="countdown-eyebrow">DEPARTURE COUNTDOWN</div>
-        <div class="countdown-numbers" id="countdownTimer">01:21:44</div>
-        <div class="countdown-footnote">
-          <i class="ph-bold ph-map-pin"></i> Tatanagar Jn (TATA)
-        </div>
-      </div>
+  <!-- ATTENTION STRIP (C1) -->
+  <nav class="attention-strip" id="attentionStrip" aria-label="Urgent notifications">
+    <div class="attention-all-clear">
+      <i class="ph-bold ph-check-circle" style="color:var(--brand-green);"></i>
+      <span>All systems clear — all trips on schedule</span>
     </div>
+  </nav>
 
-    <div class="kpi-row">
+  <main class="app-shell" id="main-content" role="main">
+
+    <!-- "MY NEXT TRAIN" CARD (C2) -->
+    <section id="myTripContainer" style="display:none;" aria-label="My next train"></section>
+
+    <!-- HERO BANNER (A1) -->
+    <section class="hero-banner" id="heroBanner" aria-label="Next upcoming departure">
+      <div class="hero-skeleton" id="heroSkeleton">
+        <div class="skeleton-line" style="width:30%;"></div>
+        <div class="skeleton-line" style="width:65%; height:32px;"></div>
+        <div class="skeleton-line" style="width:50%;"></div>
+      </div>
+    </section>
+
+    <!-- KPI ROW (A2) -->
+    <section class="kpi-row" aria-label="Performance indicators">
       <div class="kpi-card">
-        <i class="ph-bold ph-calendar-check kpi-icon-glow"></i>
+        <i class="ph-bold ph-calendar-check kpi-icon-glow" aria-hidden="true"></i>
         <div class="kpi-label">This Month Trips</div>
-        <div class="kpi-number" id="kpiMonthTrips">4</div>
-        <div class="kpi-subtext" id="kpiCompletedTrips">2 completed • 1 in transit</div>
+        <div class="kpi-number tabular-nums" id="kpiMonthTrips">0</div>
+        <div class="kpi-subtext" id="kpiCompletedTrips">0 completed • 0 in transit</div>
       </div>
 
       <div class="kpi-card">
-        <i class="ph-bold ph-path kpi-icon-glow"></i>
+        <i class="ph-bold ph-path kpi-icon-glow" aria-hidden="true"></i>
         <div class="kpi-label">Total Distance</div>
-        <div class="kpi-number" id="kpiTotalKm">2,080 km</div>
-        <div class="kpi-subtext">SER Mainline + Haldia Branch</div>
+        <div class="kpi-number tabular-nums" id="kpiTotalKm">0 km</div>
+        <div class="kpi-subtext">Cumulative railway mileage</div>
       </div>
 
       <div class="kpi-card">
-        <i class="ph-bold ph-scales kpi-icon-glow"></i>
-        <div class="kpi-label">Fairness Spread</div>
-        <div class="kpi-number" id="kpiFairnessGap">0.0</div>
-        <div class="kpi-subtext" id="kpiFairnessStatus">Balanced within ±1.0 weight unit</div>
+        <i class="ph-bold ph-scales kpi-icon-glow" aria-hidden="true"></i>
+        <div class="kpi-label">Fairness Gap</div>
+        <div class="kpi-number tabular-nums" id="kpiFairnessGap">0.0</div>
+        <div class="kpi-subtext" id="kpiFairnessStatus">
+          <span class="status-chip-dot chip-green"></span>
+          <span>Balanced</span>
+        </div>
       </div>
 
       <div class="kpi-card">
-        <i class="ph-bold ph-users-three kpi-icon-glow"></i>
+        <i class="ph-bold ph-users-three kpi-icon-glow" aria-hidden="true"></i>
         <div class="kpi-label">Active Staff</div>
-        <div class="kpi-number" id="kpiActiveStaff">4</div>
-        <div class="kpi-subtext">Round-robin rotation pool</div>
+        <div class="kpi-number tabular-nums" id="kpiActiveStaff">0</div>
+        <div class="kpi-subtext">Round-robin pool</div>
       </div>
-    </div>
+    </section>
 
-    <div class="workspace-grid">
-      <div class="map-card-wrapper">
+    <!-- WORKSPACE: MAP & LANE (A6, A10, C3, C10) -->
+    <section class="workspace-grid" aria-label="Rail corridor map and active departures">
+      <div class="map-card-wrapper" id="mapCardWrapper">
         <div class="map-header-bar">
           <div class="map-title">
-            <i class="ph-bold ph-globe-hemisphere-east" style="color:var(--brand-saffron);"></i>
-            <span>3D Rail Corridor: Tatanagar ➔ Kharagpur ➔ Howrah / Haldia</span>
+            <i class="ph-bold ph-globe-hemisphere-east" style="color:var(--brand-saffron);" aria-hidden="true"></i>
+            <span>3D Rail Corridor: Tatanagar ➔ Howrah / Haldia <span
+                style="font-weight:400; font-size:12px; color:var(--text-muted);">(schematic)</span></span>
           </div>
-          <div class="track-legend">
-            <div class="legend-item"><span class="legend-line" style="background:#0284C7;"></span> Howrah Mainline</div>
-            <div class="legend-item"><span class="legend-line" style="background:#F59E0B;"></span> Haldia Dock Line</div>
+
+          <div class="map-controls-group">
+            <button class="map-tool-pill" id="mapLiteToggleBtn" title="Toggle flat 2D / 3D mode">
+              <i class="ph-bold ph-cube" aria-hidden="true"></i> <span id="mapLiteText">3D</span>
+            </button>
+            <button class="map-tool-pill" id="mapFlyBtn" title="Cinematic fly-along track">
+              <i class="ph-bold ph-airplane-takeoff" aria-hidden="true"></i> <span>Fly</span>
+            </button>
+            <button class="map-tool-pill" id="mapFullscreenBtn" title="Toggle fullscreen map">
+              <i class="ph-bold ph-corners-out" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
         <div id="map"></div>
-        <div class="map-overlay-tools">
-          <button class="map-tool-btn" onclick="resetMapView()" title="Reset Camera"><i class="ph-bold ph-house-line"></i></button>
-          <button class="map-tool-btn" onclick="toggleMapPitch()" title="Toggle 3D Pitch"><i class="ph-bold ph-cube"></i></button>
-        </div>
       </div>
 
       <div class="side-stack">
+        <!-- ROTATION CARD (C10) -->
         <div class="content-card">
           <div class="card-heading">
-            <span>Next in Rotation</span>
-            <i class="ph-bold ph-arrows-clockwise" style="color:var(--brand-blue);"></i>
+            <span>Next in Line (Rotation)</span>
+            <button class="btn-icon" style="min-width:28px; min-height:28px; width:28px; height:28px; font-size:14px;"
+              id="fairnessHelpBtn" title="How fairness works" aria-label="Fairness info">
+              <i class="ph-bold ph-info" aria-hidden="true"></i>
+            </button>
           </div>
-          <div class="rotation-card-inner">
-            <div class="rotation-avatar-circle" id="rotationAvatar">MS</div>
-            <div>
-              <div style="font-weight:700; font-size:16px;" id="rotationName">Mohit Saw</div>
-              <div style="font-size:12px; color:var(--text-muted);" id="rotationSub">Lowest load • Ready for next WhatsApp allotment</div>
-            </div>
-          </div>
+          <div class="rotation-queue-list" id="rotationQueueList"></div>
         </div>
 
+        <!-- TODAY / TOMORROW LANE (A6) -->
         <div class="content-card" style="flex:1;">
           <div class="card-heading">
             <span>Today / Tomorrow Lane</span>
-            <span style="font-size:11px; color:var(--text-muted);" id="laneCount">3 trips</span>
+            <span style="font-size:11px; color:var(--text-muted);" id="laneCount">0 trips</span>
           </div>
-          <div class="lane-scroll-container" id="laneList">
-          </div>
+          <div class="lane-scroll-container" id="laneList"></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="calendar-container">
+    <!-- CALENDAR (A5, A8, C7) -->
+    <section class="calendar-container" aria-label="Monthly trip calendar">
       <div class="cal-controls">
         <div style="display:flex; align-items:center; gap:12px;">
-          <i class="ph-bold ph-calendar" style="color:var(--brand-blue); font-size:24px;"></i>
-          <h2 style="font-size:19px; font-weight:800; letter-spacing:-0.02em;" id="calendarMonthTitle">November 2026</h2>
+          <i class="ph-bold ph-calendar" style="color:var(--brand-blue); font-size:24px;" aria-hidden="true"></i>
+          <h2 style="font-size:18px; font-weight:800; letter-spacing:-0.02em;" id="calendarMonthTitle">November 2026
+          </h2>
+          <div id="activeDateFilterContainer"></div>
         </div>
 
-        <div class="cal-filter-tabs">
-          <button class="cal-tab-btn active" onclick="setCalFilter('all', this)">All Trips</button>
-          <button class="cal-tab-btn" onclick="setCalFilter('Kolkata', this)">Kolkata</button>
-          <button class="cal-tab-btn" onclick="setCalFilter('Haldia', this)">Haldia</button>
-          <button class="cal-tab-btn" onclick="setCalFilter('Urgent', this)">Urgent Only</button>
+        <div class="cal-view-selector" role="group" aria-label="Calendar layout options">
+          <button class="cal-view-btn active" data-view="month">Month</button>
+          <button class="cal-view-btn" data-view="agenda">Agenda</button>
+        </div>
+
+        <div class="cal-filter-tabs" role="group" aria-label="Filter trips by category">
+          <button class="cal-tab-btn active" data-cal-filter="all">All Trips</button>
+          <button class="cal-tab-btn" data-cal-filter="Kolkata">Kolkata</button>
+          <button class="cal-tab-btn" data-cal-filter="Haldia">Haldia</button>
+          <button class="cal-tab-btn" data-cal-filter="Urgent">Urgent Only</button>
         </div>
 
         <div style="display:flex; gap:8px;">
-          <button class="btn-icon" onclick="changeMonth(-1)"><i class="ph-bold ph-caret-left"></i></button>
-          <button class="btn-icon" onclick="changeMonth(1)"><i class="ph-bold ph-caret-right"></i></button>
+          <button class="btn-icon" id="calTodayBtn" style="width:auto; padding:0 12px; font-size:12px; font-weight:700;"
+            title="Jump to today">Today</button>
+          <button class="btn-icon" id="calPrevBtn" aria-label="Previous month"><i class="ph-bold ph-caret-left"
+              aria-hidden="true"></i></button>
+          <button class="btn-icon" id="calNextBtn" aria-label="Next month"><i class="ph-bold ph-caret-right"
+              aria-hidden="true"></i></button>
         </div>
       </div>
 
-      <div class="cal-grid-layout" id="calendarGrid">
-      </div>
-    </div>
+      <div class="cal-grid-layout" id="calendarGrid" role="grid" aria-label="Days grid"></div>
+      <div class="cal-agenda-layout" id="calendarAgenda" style="display:none;" aria-label="Agenda list"></div>
+    </section>
 
-    <div class="charts-grid">
+    <!-- CHARTS & DATA TABLES (A3, E) -->
+    <section class="charts-grid" aria-label="Analytics and fairness charts">
       <div class="content-card">
-        <div class="card-heading">Fairness Load Distribution (Per Person)</div>
-        <div style="height:230px;">
-          <canvas id="staffLoadChart"></canvas>
+        <div class="card-heading">Fairness Load Distribution</div>
+        <div style="height:230px; position:relative;">
+          <canvas id="staffLoadChart" role="img" aria-label="Staff weighted load comparison chart"></canvas>
         </div>
+        <details class="chart-data-table">
+          <summary>View tabular fairness data</summary>
+          <table id="staffLoadDataTable">
+            <thead>
+              <tr>
+                <th>Staff</th>
+                <th>Weighted Load</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </details>
       </div>
 
       <div class="content-card">
         <div class="card-heading">Destinations Share</div>
-        <div style="height:230px;">
-          <canvas id="destDonutChart"></canvas>
+        <div style="height:230px; position:relative;">
+          <canvas id="destDonutChart" role="img" aria-label="Destination percentage distribution chart"></canvas>
         </div>
+        <details class="chart-data-table">
+          <summary>View tabular destination data</summary>
+          <table id="destDataTable">
+            <thead>
+              <tr>
+                <th>Destination</th>
+                <th>Trips</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </details>
       </div>
-    </div>
+    </section>
 
-    <div class="table-container-card">
+    <!-- TRIPS TABLE / STACKED CARDS (A4, A7, A9, C8, D) -->
+    <section class="table-container-card" aria-label="Full trips registry">
       <div class="table-filter-bar">
-        <input type="text" class="input-control" id="searchFilter" placeholder="Search traveller, destination, ID..." oninput="applyFilters()" style="min-width:240px;">
-        <select class="input-control" id="staffFilter" onchange="applyFilters()">
+        <input type="text" class="input-control" id="searchFilter" placeholder="Search traveller, destination, ID..."
+          style="min-width:240px;" aria-label="Filter trips by keyword">
+        <select class="input-control" id="staffFilter" aria-label="Filter by staff member">
           <option value="">All Staff</option>
         </select>
-        <select class="input-control" id="destFilter" onchange="applyFilters()">
+        <select class="input-control" id="destFilter" aria-label="Filter by destination">
           <option value="">All Destinations</option>
         </select>
-        <select class="input-control" id="statusFilter" onchange="applyFilters()">
+        <select class="input-control" id="statusFilter" aria-label="Filter by status">
           <option value="">All Statuses</option>
           <option value="Planned">Planned</option>
           <option value="Assigned">Assigned</option>
@@ -1113,16 +1701,22 @@
           <option value="Returned">Returned</option>
           <option value="Needs reassignment">Needs reassignment</option>
         </select>
+        <button class="btn-icon" id="clearAllFiltersBtn"
+          style="width:auto; padding:0 12px; font-size:12px; font-weight:700;"
+          title="Clear all search filters">Clear</button>
+
+        <div class="active-filters-chips-tray" id="activeFilterChipsTray"></div>
       </div>
 
-      <div style="overflow-x:auto;">
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-desktop-view" style="overflow-x:auto;">
         <table>
           <thead>
             <tr>
-              <th>Trip ID</th>
-              <th>Destination</th>
-              <th>Date</th>
-              <th>Traveller</th>
+              <th data-sort="tripId">Trip ID <i class="ph-bold ph-arrows-down-up" aria-hidden="true"></i></th>
+              <th data-sort="destination">Destination <i class="ph-bold ph-arrows-down-up" aria-hidden="true"></i></th>
+              <th data-sort="date">Date <i class="ph-bold ph-arrows-down-up" aria-hidden="true"></i></th>
+              <th data-sort="assignedTo">Traveller <i class="ph-bold ph-arrows-down-up" aria-hidden="true"></i></th>
               <th>Priority</th>
               <th>Train</th>
               <th>Ticket</th>
@@ -1130,154 +1724,551 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody id="tripsTableBody">
-          </tbody>
+          <tbody id="tripsTableBody"></tbody>
         </table>
       </div>
-    </div>
 
+      <!-- MOBILE STACKED CARDS VIEW (D) -->
+      <div class="table-mobile-cards" id="tripsMobileCardsBody"></div>
+    </section>
+
+  </main>
+
+  <!-- RESPONSIVE TRIP DRAWER / BOTTOM SHEET (C4) -->
+  <div class="drawer-veil" id="tripDrawerVeil" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer-panel" id="tripDrawerPanel">
+      <div class="drawer-header">
+        <div>
+          <span class="badge-pill" id="drawerTripId" style="background:var(--brand-blue); color:#fff;">TRP-</span>
+          <span class="badge-pill" id="drawerPriority">NORMAL</span>
+        </div>
+        <button class="btn-icon" id="drawerCloseBtn" aria-label="Close details dialog">&times;</button>
+      </div>
+
+      <div class="drawer-body">
+        <div>
+          <h2 style="font-size:22px; font-weight:800;" id="drawerTitle">Destination</h2>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:3px;" id="drawerPurpose">Purpose</p>
+        </div>
+
+        <div
+          style="background:var(--surface-2); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <div style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Assigned
+            Traveller</div>
+          <div style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin-top:4px;"
+            id="drawerTraveller">--</div>
+        </div>
+
+        <div>
+          <div
+            style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
+            Train Route & Ticket</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="background:var(--surface-2); padding:10px 12px; border-radius:6px; font-size:12.5px;">
+              <div><strong>Onward:</strong> <span id="drawerOnwardTrain">--</span></div>
+              <div style="color:var(--text-muted); font-size:11.5px;" id="drawerOnwardTime">Dep: -- | Arr: --</div>
+            </div>
+            <div style="background:var(--surface-2); padding:10px 12px; border-radius:6px; font-size:12.5px;">
+              <div><strong>Return:</strong> <span id="drawerReturnTrain">--</span></div>
+              <div style="color:var(--text-muted); font-size:11.5px;" id="drawerReturnTime">Dep: -- | Arr: --</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7-STAGE STEPPER (C4) -->
+        <div>
+          <div
+            style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); margin-bottom:12px;">
+            Trip Progress Timeline</div>
+          <div class="stepper-timeline" id="drawerStepper"></div>
+        </div>
+
+        <!-- UTILITY ACTIONS (C4) -->
+        <div>
+          <div
+            style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted); margin-bottom:8px;">
+            Actions</div>
+          <div class="drawer-actions-row">
+            <button class="btn-action-tool" id="btnAddToCalendar" aria-label="Add trip to calendar as iCal event">
+              <i class="ph-bold ph-calendar-plus" style="font-size:18px; color:var(--brand-blue);"
+                aria-hidden="true"></i>
+              <span>Add to Cal</span>
+            </button>
+            <a class="btn-action-tool" id="btnShareWhatsApp" target="_blank" rel="noopener"
+              aria-label="Share trip details on WhatsApp">
+              <i class="ph-bold ph-whatsapp-logo" style="font-size:18px; color:#25D366;" aria-hidden="true"></i>
+              <span>WhatsApp</span>
+            </a>
+            <button class="btn-action-tool" id="btnCopySummary" aria-label="Copy trip summary to clipboard">
+              <i class="ph-bold ph-copy" style="font-size:18px; color:var(--brand-saffron);" aria-hidden="true"></i>
+              <span>Copy Info</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="modal-veil" id="tripModal" onclick="closeTripModal(event)">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <button class="modal-close-btn" onclick="closeTripModal()">&times;</button>
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-        <span class="badge-pill" id="modalTripId" style="background:var(--brand-blue); color:#fff;">TRP-2026-11-001</span>
-        <span class="badge-pill badge-urgent" id="modalPriority">URGENT</span>
+  <!-- "HOW FAIRNESS WORKS" MODAL (C10) -->
+  <div class="drawer-veil" id="fairnessModalVeil" style="justify-content:center; align-items:center;" role="dialog"
+    aria-modal="true" aria-labelledby="fairnessModalTitle">
+    <div class="drawer-panel"
+      style="max-height:auto; height:auto; border-radius:var(--radius-lg); padding:24px; max-width:440px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:16px; font-weight:800;" id="fairnessModalTitle">How Rotation Fairness Works</h3>
+        <button class="btn-icon" style="min-width:32px; min-height:32px; width:32px; height:32px;"
+          id="fairnessModalCloseBtn" aria-label="Close dialog">&times;</button>
       </div>
-      <h2 style="font-size:22px; font-weight:800; margin-bottom:18px;" id="modalTitle">Kolkata Port</h2>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
-        <div>
-          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Traveller</div>
-          <div style="font-weight:700; font-size:15px; margin-top:2px;" id="modalTraveller">Mohit Saw</div>
-        </div>
-        <div>
-          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Date</div>
-          <div style="font-weight:700; font-size:15px; margin-top:2px;" id="modalDate">25-Nov-2026</div>
-        </div>
-        <div>
-          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Train Details</div>
-          <div style="font-weight:600; font-size:14px; margin-top:2px;" id="modalOnwardTrain">12814 Steel Exp (06:10)</div>
-        </div>
-        <div>
-          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Ticket Status</div>
-          <div style="font-weight:600; font-size:14px; margin-top:2px;" id="modalTicketStatus">Booked (CC)</div>
-        </div>
-      </div>
-
-      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Milestone Timeline</div>
-      <div id="modalTimeline" style="font-size:13px; display:flex; flex-direction:column; gap:10px;">
-      </div>
+      <p style="font-size:13px; line-height:1.6; color:var(--text-muted);">
+        1. Every destination has a complexity weight (e.g. Kolkata = 1.0, Haldia Dock = 1.3).<br>
+        2. A traveller's <strong>Weighted Load</strong> = sum of all assigned trip weights this month.<br>
+        3. When a new WhatsApp or Sheet trip is created, the system auto-allots it to the active staff with the
+        <strong>lowest load</strong>.<br>
+        4. Staff on approved leave or already assigned on overlapping dates are skipped.<br>
+        5. The <strong>Fairness Gap</strong> keeps allotment balanced within &plusmn;1.0 weight unit.
+      </p>
     </div>
   </div>
 
-  <div class="toast-tray" id="toastTray"></div>
+  <!-- "REQUEST A TRIP" WHATSAPP FAB (C5) -->
+  <a class="wa-request-fab" id="waRequestFab" target="_blank" rel="noopener"
+    aria-label="Request a new trip via WhatsApp">
+    <i class="ph-bold ph-whatsapp-logo" style="font-size:20px;" aria-hidden="true"></i>
+    <span>Request a Trip</span>
+  </a>
+
+  <div class="toast-tray" id="toastTray" aria-live="polite"></div>
 
   <script>
+    /* ==========================================================================
+       LOCALIZATION & STRING CONSTANTS (E)
+       ========================================================================== */
+    const STRINGS = {
+      allClear: "All systems clear — all trips on schedule",
+      noUpcoming: "No Upcoming Train Trips",
+      departed: "DEPARTED",
+      offlineStale: "Stale (Offline)",
+      syncing: "Syncing...",
+      live: "Live",
+      copied: "Copied trip summary to clipboard",
+      downloadedICS: "Downloaded calendar invite (.ics)"
+    };
+
+    /* ==========================================================================
+       SECURITY & XSS HELPERS (A4, A8)
+       ========================================================================== */
+    function esc(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function parseDateIST(str) {
+      if (!str) return null;
+      if (str instanceof Date && !isNaN(str)) return str;
+      const s = String(str).trim();
+      if (s.includes('T')) {
+        const d = new Date(s);
+        if (!isNaN(d.getTime())) return d;
+      }
+      const parts = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+      if (parts) {
+        const months = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+        const mon = months[parts[2].toLowerCase()];
+        if (mon !== undefined) {
+          return new Date(Date.UTC(parseInt(parts[3], 10), mon, parseInt(parts[1], 10), 0, 30, 0));
+        }
+      }
+      return null;
+    }
+
+    function dayKeyIST(dateObj) {
+      if (!dateObj) return '';
+      const istTime = new Date(dateObj.getTime() + (5.5 * 3600000));
+      return istTime.toISOString().slice(0, 10);
+    }
+
+    function fmtTimeIST(dateObj) {
+      if (!dateObj) return '--:--';
+      const istTime = new Date(dateObj.getTime() + (5.5 * 3600000));
+      const h = String(istTime.getUTCHours()).padStart(2, '0');
+      const m = String(istTime.getUTCMinutes()).padStart(2, '0');
+      return `${h}:${m}`;
+    }
+
+    /* ==========================================================================
+       TRACK COORDINATES & GEOMETRY
+       ========================================================================== */
     const TATA_TO_HOWRAH_TRACK = [
-      [86.2029, 22.8046],
-      [86.2006, 22.7719],
-      [86.2945, 22.7561],
-      [86.3762, 22.7214],
-      [86.4820, 22.5830],
-      [86.6021, 22.4812],
-      [86.9934, 22.4518],
-      [87.3256, 22.3398],
-      [87.6534, 22.3689],
-      [87.8612, 22.4285],
-      [88.1345, 22.5123],
-      [88.2779, 22.5828],
-      [88.3426, 22.5839],
-      [88.3224, 22.5458]
+      [86.2029, 22.8046], [86.2006, 22.7719], [86.2945, 22.7561], [86.3762, 22.7214],
+      [86.4820, 22.5830], [86.6021, 22.4812], [86.9934, 22.4518], [87.3256, 22.3398],
+      [87.6534, 22.3689], [87.8612, 22.4285], [88.1345, 22.5123], [88.2779, 22.5828],
+      [88.3426, 22.5839], [88.3224, 22.5458]
     ];
 
     const KGP_TO_HALDIA_TRACK = [
-      [87.3256, 22.3398],
-      [87.6534, 22.3689],
-      [87.9125, 22.2965],
-      [87.9862, 22.1845],
-      [88.0815, 22.0345],
-      [88.0900, 22.0300]
+      [87.3256, 22.3398], [87.6534, 22.3689], [87.9125, 22.2965],
+      [87.9862, 22.1845], [88.0815, 22.0345], [88.0900, 22.0300]
     ];
 
     const REAL_STATIONS = [
-      { name: "Swift Strips Plant", subtitle: "Jamshedpur Base", coords: [86.2029, 22.8046], color: "#EF4444", isBase: true },
-      { name: "Tatanagar Jn (TATA)", subtitle: "Platform 1 • Steel Exp", coords: [86.2006, 22.7719], color: "#0284C7" },
+      { name: "Swift Strips Plant", subtitle: "Jamshedpur Base", coords: [86.2029, 22.8046], color: "#EF4444" },
+      { name: "Tatanagar Jn (TATA)", subtitle: "Origin Station", coords: [86.2006, 22.7719], color: "#0284C7" },
       { name: "Ghatsila", subtitle: "SER Station", coords: [86.4820, 22.5830], color: "#64748B" },
-      { name: "Kharagpur Jn (KGP)", subtitle: "Main SER Junction", coords: [87.3256, 22.3398], color: "#0284C7" },
-      { name: "Santragachi Jn (SRC)", subtitle: "Express Stop", coords: [88.2779, 22.5828], color: "#0284C7" },
+      { name: "Kharagpur Jn (KGP)", subtitle: "Main Junction", coords: [87.3256, 22.3398], color: "#0284C7" },
+      { name: "Santragachi Jn (SRC)", subtitle: "Express Halt", coords: [88.2779, 22.5828], color: "#0284C7" },
       { name: "Howrah Jn (HWH)", subtitle: "Terminus (Kolkata)", coords: [88.3426, 22.5839], color: "#0284C7" },
       { name: "Kolkata Port Area", subtitle: "Customs & Docks", coords: [88.3224, 22.5458], color: "#10B981" },
-      { name: "Haldia Dock Complex", subtitle: "Port Delivery Office", coords: [88.0900, 22.0300], color: "#F59E0B" }
+      { name: "Haldia Dock Complex", subtitle: "Port Office", coords: [88.0900, 22.0300], color: "#F59E0B" }
     ];
 
-    let appData = {
-      trips: [],
-      destinations: [],
-      stations: [],
-      staff: [],
-      nextInRotation: '',
-      mapboxToken: ''
-    };
+    /* ==========================================================================
+       APP STATE
+       ========================================================================== */
+    let appData = { trips: [], destinations: [], stations: [], staff: [], rotation: null, stats: null, config: {} };
+    let selectedDayFilter = null;
+    let selectedStaffUser = '';
     let currentCalMonth = new Date().getMonth();
     let currentCalYear = new Date().getFullYear();
-    let calFilterMode = 'all';
+    let calCategoryFilter = 'all';
+    let calViewMode = 'month';
+
+    let tableSortCol = 'date';
+    let tableSortAsc = true;
+
     let map = null;
     let mapType = 'none';
-    let countdownInterval = null;
-    let staffChart = null;
-    let destChart = null;
+    let isMapLite = false;
+    let isFlying = false;
+    let flyInterval = null;
+    let countdownTimerId = null;
+    let staffChartInstance = null;
+    let destChartInstance = null;
+    let activeOpenedTrip = null;
 
-    if (typeof google === 'undefined' || !google.script || !google.script.run) {
-      window.google = {
-        script: {
-          run: {
-            withSuccessHandler: function(cb) { this._cb = cb; return this; },
-            withFailureHandler: function(fcb) { this._fcb = fcb; return this; },
-            getPublicData: function() {
-              setTimeout(() => { if (this._cb) this._cb(generateMockData()); }, 200);
-            }
+    const isAppsScript = (typeof google !== 'undefined' && google.script && google.script.run);
+
+    function getMockPayload() {
+      return {
+        generatedAt: "2026-11-24T15:30:00+05:30",
+        config: {
+          whatsappRequestNumber: "+919876543210",
+          orgName: "Swift Strips India Pvt. Ltd.",
+          viewKeyRequired: false
+        },
+        staff: [
+          { id: "S1", name: "Mohit Saw", initials: "MS", colour: "#0284C7", active: true },
+          { id: "S2", name: "Dablu Pandit", initials: "DP", colour: "#10B981", active: true },
+          { id: "S3", name: "Suraj Kumar", initials: "SK", colour: "#F97316", active: true },
+          { id: "S4", name: "Abhinas", initials: "AB", colour: "#8B5CF6", active: true }
+        ],
+        destinations: [
+          { id: "D1", name: "Kolkata", roadKm: 250, weight: 1.0 },
+          { id: "D2", name: "Haldia", roadKm: 260, weight: 1.2 },
+          { id: "D3", name: "Kolkata Port", roadKm: 255, weight: 1.3 },
+          { id: "D4", name: "Haldia Dock", roadKm: 265, weight: 1.3 }
+        ],
+        stations: [
+          { code: "TATA", name: "Tatanagar Jn" }, { code: "KGP", name: "Kharagpur Jn" },
+          { code: "HWH", name: "Howrah Jn" }, { code: "HLZ", name: "Haldia" }
+        ],
+        rotation: {
+          nextStaffId: "S1",
+          nextStaffName: "Mohit Saw",
+          queue: [
+            { staffId: "S1", name: "Mohit Saw", weightedLoad: 3.5 },
+            { staffId: "S2", name: "Dablu Pandit", weightedLoad: 3.8 },
+            { staffId: "S3", name: "Suraj Kumar", weightedLoad: 4.0 },
+            { staffId: "S4", name: "Abhinas", weightedLoad: 4.2 }
+          ]
+        },
+        stats: {
+          fairnessGap: 0.7,
+          weightedLoadByStaff: { "Mohit Saw": 3.5, "Dablu Pandit": 3.8, "Suraj Kumar": 4.0, "Abhinas": 4.2 }
+        },
+        trips: [
+          {
+            tripId: "TRP-2026-11-001",
+            purpose: "Customs & Port clearances",
+            docType: "Customs",
+            destination: "Kolkata Port",
+            startDate: "2026-11-25T00:00:00+05:30",
+            endDate: "2026-11-25T23:59:00+05:30",
+            priority: "Urgent",
+            assignedTo: "Mohit Saw",
+            staffColour: "#0284C7",
+            status: "In Transit",
+            onwardTrainNo: "12814",
+            onwardTrainName: "Steel Express",
+            onwardDepDateTime: "2026-11-25T06:10:00+05:30",
+            onwardArrDateTime: "2026-11-25T10:20:00+05:30",
+            returnTrainNo: "12813",
+            returnTrainName: "Steel Express",
+            returnDepDateTime: "2026-11-25T17:25:00+05:30",
+            returnArrDateTime: "2026-11-25T21:30:00+05:30",
+            ticketStatus: "Booked",
+            travelClass: "CC",
+            source: "WHATSAPP",
+            lastUpdated: "2026-11-24T12:00:00+05:30",
+            timeline: [
+              { step: "Requested", at: "24-Nov 10:15" },
+              { step: "Assigned", at: "24-Nov 10:20" },
+              { step: "Ticket booked", at: "24-Nov 11:30" },
+              { step: "Departed", at: "25-Nov 06:10" }
+            ]
+          },
+          {
+            tripId: "TRP-2026-11-002",
+            purpose: "Bank Guarantee submission with O'Brien Bank",
+            docType: "Bank",
+            destination: "Kolkata",
+            startDate: "2026-11-26T00:00:00+05:30",
+            endDate: "2026-11-26T23:59:00+05:30",
+            priority: "Normal",
+            assignedTo: "Dablu Pandit",
+            staffColour: "#10B981",
+            status: "Assigned",
+            onwardTrainNo: "12814",
+            onwardTrainName: "Steel Express",
+            onwardDepDateTime: "2026-11-26T06:10:00+05:30",
+            ticketStatus: "Booked",
+            travelClass: "CC",
+            source: "SHEET",
+            lastUpdated: "2026-11-24T12:00:00+05:30",
+            timeline: [{ step: "Requested", at: "24-Nov 11:00" }, { step: "Assigned", at: "24-Nov 11:05" }]
+          },
+          {
+            tripId: "TRP-2026-11-003",
+            purpose: "Plant consignment LC delivery",
+            docType: "LC",
+            destination: "Haldia",
+            startDate: "2026-11-28T00:00:00+05:30",
+            endDate: "2026-11-28T23:59:00+05:30",
+            priority: "Urgent",
+            assignedTo: "Suraj Kumar",
+            staffColour: "#F97316",
+            status: "Planned",
+            onwardTrainNo: "18616",
+            onwardTrainName: "Kriya Yoga Exp",
+            onwardDepDateTime: "2026-11-28T07:15:00+05:30",
+            ticketStatus: "Not booked",
+            travelClass: "3A",
+            source: "WHATSAPP",
+            lastUpdated: "2026-11-24T12:00:00+05:30"
+          },
+          {
+            tripId: "TRP-2026-11-004",
+            purpose: "Dock clearance verification",
+            docType: "Customs",
+            destination: "Haldia Dock",
+            startDate: "2026-11-30T00:00:00+05:30",
+            endDate: "2026-11-30T23:59:00+05:30",
+            priority: "Normal",
+            assignedTo: "Abhinas",
+            staffColour: "#8B5CF6",
+            status: "Planned",
+            onwardTrainNo: "18616",
+            onwardTrainName: "Kriya Yoga Exp",
+            onwardDepDateTime: "2026-11-30T07:15:00+05:30",
+            ticketStatus: "Not booked",
+            travelClass: "CC",
+            source: "SHEET",
+            lastUpdated: "2026-11-24T12:00:00+05:30"
           }
-        }
+        ]
       };
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      fetchData(false);
-      setInterval(() => fetchData(false), 60000);
-    });
+    /* ==========================================================================
+       DATA FETCHING & URL HASH SYNC (C8)
+       ========================================================================== */
+    function fetchData(isManual) {
+      document.getElementById('syncStatus').innerText = STRINGS.syncing;
+      document.getElementById('livePulse').classList.remove('stale');
 
-    function toggleTheme() {
-      const isDark = document.body.getAttribute('data-theme') === 'dark';
-      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      document.getElementById('themeIcon').className = isDark ? 'ph-bold ph-moon' : 'ph-bold ph-sun';
-      if (staffChart) staffChart.update();
-      if (destChart) destChart.update();
-    }
+      if (!isAppsScript) {
+        setTimeout(() => {
+          appData = getMockPayload();
+          handleDataSuccess(isManual);
+        }, 150);
+        return;
+      }
 
-    function fetchData(forceToast) {
-      document.getElementById('syncStatus').innerText = "Syncing...";
       google.script.run
         .withSuccessHandler((data) => {
-          document.getElementById('syncStatus').innerText = "Live";
-          const prevCount = appData.trips ? appData.trips.length : 0;
           appData = data;
-          if (forceToast) showToast("Updated data from Google Sheet");
-          if (prevCount > 0 && data.trips.length > prevCount) {
-            const latest = data.trips[data.trips.length - 1];
-            showToast(`New trip allotted: ${latest.assignedTo} -> ${latest.destination}`);
-          }
-          renderApp();
+          try { localStorage.setItem('swift_trip_cache', JSON.stringify(data)); } catch (e) { }
+          handleDataSuccess(isManual);
         })
-        .withFailureHandler((err) => {
-          document.getElementById('syncStatus').innerText = "Stale (Offline)";
-          showToast("Sync paused - showing cached records");
+        .withFailureHandler(() => {
+          let cached = null;
+          try { cached = JSON.parse(localStorage.getItem('swift_trip_cache')); } catch (e) { }
+          if (cached && cached.trips) {
+            appData = cached;
+            document.getElementById('syncStatus').innerText = STRINGS.offlineStale;
+            document.getElementById('livePulse').classList.add('stale');
+            renderApp();
+          }
         })
         .getPublicData();
     }
 
+    function handleDataSuccess(isManual) {
+      document.getElementById('syncStatus').innerText = STRINGS.live;
+      document.getElementById('livePulse').classList.remove('stale');
+      if (isManual) showToast("Updated latest records");
+      renderApp();
+    }
+
+    /* ==========================================================================
+       INITIALIZATION & EVENTS
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        selectedStaffUser = localStorage.getItem('swift_user_persona') || '';
+      } catch (e) { }
+
+      document.getElementById('personalizeSelector').addEventListener('change', (e) => {
+        selectedStaffUser = e.target.value;
+        try { localStorage.setItem('swift_user_persona', selectedStaffUser); } catch (e) { }
+        renderPersonalizedCard();
+        applyFilters();
+      });
+
+      document.getElementById('contrastBtn').addEventListener('click', () => {
+        document.body.classList.toggle('high-contrast');
+        showToast(document.body.classList.contains('high-contrast') ? "High Contrast Mode Active" : "Normal Mode");
+      });
+
+      document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+      document.getElementById('refreshBtn').addEventListener('click', () => fetchData(true));
+
+      document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+      document.getElementById('tripDrawerVeil').addEventListener('click', (e) => {
+        if (e.target.id === 'tripDrawerVeil') closeDrawer();
+      });
+
+      document.getElementById('btnAddToCalendar').addEventListener('click', downloadICSCalendar);
+      document.getElementById('btnCopySummary').addEventListener('click', copyTripSummary);
+
+      document.getElementById('fairnessHelpBtn').addEventListener('click', () => {
+        document.getElementById('fairnessModalVeil').classList.add('open');
+      });
+      document.getElementById('fairnessModalCloseBtn').addEventListener('click', () => {
+        document.getElementById('fairnessModalVeil').classList.remove('open');
+      });
+      document.getElementById('fairnessModalVeil').addEventListener('click', (e) => {
+        if (e.target.id === 'fairnessModalVeil') document.getElementById('fairnessModalVeil').classList.remove('open');
+      });
+
+      document.getElementById('mapLiteToggleBtn').addEventListener('click', toggleMapLite);
+      document.getElementById('mapFlyBtn').addEventListener('click', toggleMapFly);
+      document.getElementById('mapFullscreenBtn').addEventListener('click', toggleMapFullscreen);
+
+      document.getElementById('calTodayBtn').addEventListener('click', () => {
+        const now = new Date();
+        currentCalMonth = now.getMonth();
+        currentCalYear = now.getFullYear();
+        selectedDayFilter = dayKeyIST(now);
+        renderCalendar();
+        applyFilters();
+      });
+
+      document.getElementById('calPrevBtn').addEventListener('click', () => changeMonth(-1));
+      document.getElementById('calNextBtn').addEventListener('click', () => changeMonth(1));
+
+      document.querySelectorAll('.cal-view-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.cal-view-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          calViewMode = e.target.getAttribute('data-view');
+          renderCalendar();
+        });
+      });
+
+      document.querySelectorAll('.cal-tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.cal-tab-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          calCategoryFilter = e.target.getAttribute('data-cal-filter');
+          renderCalendar();
+        });
+      });
+
+      let debounceTimeout = null;
+      document.getElementById('searchFilter').addEventListener('input', () => {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => applyFilters(), 200);
+      });
+
+      ['staffFilter', 'destFilter', 'statusFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('change', applyFilters);
+      });
+
+      document.getElementById('clearAllFiltersBtn').addEventListener('click', () => {
+        document.getElementById('searchFilter').value = '';
+        document.getElementById('staffFilter').value = '';
+        document.getElementById('destFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        selectedDayFilter = null;
+        applyFilters();
+        renderCalendar();
+      });
+
+      document.querySelectorAll('th[data-sort]').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = th.getAttribute('data-sort');
+          if (tableSortCol === col) {
+            tableSortAsc = !tableSortAsc;
+          } else {
+            tableSortCol = col;
+            tableSortAsc = true;
+          }
+          applyFilters();
+        });
+      });
+
+      document.body.addEventListener('click', (e) => {
+        const trigger = e.target.closest('[data-trip-id]');
+        if (trigger) {
+          const tripId = trigger.getAttribute('data-trip-id');
+          openTripDrawerById(tripId);
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeDrawer();
+          document.getElementById('fairnessModalVeil').classList.remove('open');
+        }
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        const bannerEntry = entries[0];
+        const miniBar = document.getElementById('stickyMiniBar');
+        if (!bannerEntry.isIntersecting) {
+          miniBar.classList.add('visible');
+        } else {
+          miniBar.classList.remove('visible');
+        }
+      }, { threshold: 0.1 });
+      observer.observe(document.getElementById('heroBanner'));
+
+      fetchData(false);
+      setInterval(() => { if (!document.hidden) fetchData(false); }, 60000);
+    });
+
+    /* ==========================================================================
+       RENDER CORE
+       ========================================================================== */
     function renderApp() {
+      populatePersonalizeSelector();
+      renderAttentionStrip();
+      renderPersonalizedCard();
       renderHero();
       renderKPIs();
       renderRotation();
@@ -1286,97 +2277,441 @@
       renderCharts();
       populateDropdowns();
       applyFilters();
-      initHighGraphicsMap();
+      initSchematicMap();
+      renderWhatsAppFAB();
     }
 
-    function renderHero() {
-      if (!appData.trips || appData.trips.length === 0) return;
-      const t = appData.trips[0];
-      document.getElementById('heroTripId').innerText = t.tripId;
-      document.getElementById('heroDestination').innerText = t.destination;
-      document.getElementById('heroPriority').innerText = t.priority.toUpperCase();
-      document.getElementById('heroDocType').innerText = t.docType || 'Document';
-      document.getElementById('heroTraveller').innerHTML = `<i class="ph-fill ph-user-circle" style="color:var(--brand-blue); font-size:18px;"></i> ${t.assignedTo}`;
-      document.getElementById('heroTrainDetails').innerHTML = `<i class="ph-bold ph-train-simple"></i> ${t.onwardTrainNo} ${t.onwardTrainName} • Dep: 06:10 IST`;
-      document.getElementById('heroTicketBadge').innerText = t.ticketStatus.toUpperCase();
-
-      if (countdownInterval) clearInterval(countdownInterval);
-      const target = t.onwardDepDateTime ? new Date(t.onwardDepDateTime) : new Date(t.startDate + 'T06:10:00');
-
-      function tick() {
-        const diff = target.getTime() - new Date().getTime();
-        if (diff <= 0) {
-          document.getElementById('countdownTimer').innerText = "DEPARTED";
-          return;
-        }
-        const h = Math.floor(diff / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
-        document.getElementById('countdownTimer').innerText = 
-          `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-      }
-      tick();
-      countdownInterval = setInterval(tick, 1000);
-    }
-
-    function renderKPIs() {
+    /* ==========================================================================
+       "NEEDS ATTENTION" STRIP (C1)
+       ========================================================================== */
+    function renderAttentionStrip() {
+      const container = document.getElementById('attentionStrip');
       const trips = appData.trips || [];
-      document.getElementById('kpiMonthTrips').innerText = trips.length;
-      const completed = trips.filter(t => t.status === 'Delivered' || t.status === 'Returned').length;
-      const inTransit = trips.filter(t => t.status === 'In Transit').length;
-      document.getElementById('kpiCompletedTrips').innerText = `${completed} completed • ${inTransit} in transit`;
-      document.getElementById('kpiTotalKm').innerText = `${(trips.length * 520).toLocaleString()} km`;
-      document.getElementById('kpiActiveStaff').innerText = appData.staff.filter(s => s.active).length;
-    }
+      const now = new Date();
 
-    function renderRotation() {
-      const nextName = appData.nextInRotation || 'Mohit Saw';
-      document.getElementById('rotationName').innerText = nextName;
-      document.getElementById('rotationAvatar').innerText = nextName.split(' ').map(n=>n[0]).join('').slice(0,2);
-    }
+      const unassigned = trips.filter(t => !t.assignedTo || t.assignedTo === 'Unassigned' || t.status === 'Requested');
+      const urgentTickets = trips.filter(t => {
+        if (t.status === 'Cancelled' || t.ticketStatus === 'Booked') return false;
+        const dep = parseDateIST(t.onwardDepDateTime || t.startDate);
+        return dep && (dep - now) > 0 && (dep - now) <= 24 * 3600000;
+      });
+      const departingSoon = trips.filter(t => {
+        if (t.status === 'Cancelled') return false;
+        const dep = parseDateIST(t.onwardDepDateTime || t.startDate);
+        return dep && (dep - now) > 0 && (dep - now) <= 3 * 3600000;
+      });
+      const overdue = trips.filter(t => {
+        if (t.status === 'Cancelled' || ['Reached', 'Delivered', 'Returned'].includes(t.status)) return false;
+        const dep = parseDateIST(t.onwardDepDateTime || t.startDate);
+        return dep && (now - dep) > 8 * 3600000;
+      });
+      const reassignment = trips.filter(t => t.status === 'Needs reassignment');
 
-    function renderLane() {
-      const container = document.getElementById('laneList');
-      container.innerHTML = '';
-      const trips = (appData.trips || []).slice(0, 5);
-      document.getElementById('laneCount').innerText = `${trips.length} upcoming`;
+      const totalAlerts = unassigned.length + urgentTickets.length + departingSoon.length + overdue.length + reassignment.length;
 
-      trips.forEach(t => {
-        const item = document.createElement('div');
-        item.className = 'trip-mini-item';
-        item.style.borderLeftColor = t.staffColour || '#0284C7';
-        item.onclick = () => openTripModal(t);
+      const stickyAlerts = document.getElementById('stickyMiniAlerts');
+      if (totalAlerts > 0) {
+        stickyAlerts.style.display = 'inline-flex';
+        stickyAlerts.innerText = `${totalAlerts} Alert${totalAlerts > 1 ? 's' : ''}`;
+      } else {
+        stickyAlerts.style.display = 'none';
+      }
 
-        item.innerHTML = `
-          <div class="trip-mini-top">
-            <span class="trip-mini-dest">${t.destination}</span>
-            <span class="badge-pill" style="background:rgba(2,132,199,0.12); color:var(--brand-blue);">${t.status}</span>
-          </div>
-          <div class="trip-mini-meta">
-            <span><i class="ph-bold ph-user"></i> ${t.assignedTo}</span>
-            <span><i class="ph-bold ph-calendar"></i> ${t.startDate}</span>
+      if (totalAlerts === 0) {
+        container.innerHTML = `
+          <div class="attention-all-clear">
+            <i class="ph-bold ph-check-circle" style="color:var(--brand-green);" aria-hidden="true"></i>
+            <span>${STRINGS.allClear}</span>
           </div>
         `;
-        container.appendChild(item);
+        return;
+      }
+
+      container.innerHTML = '';
+
+      function addChip(icon, label, count, className, filterFn) {
+        if (count === 0) return;
+        const chip = document.createElement('div');
+        chip.className = `attention-chip ${className}`;
+        chip.innerHTML = `<i class="ph-bold ${icon}" aria-hidden="true"></i> <span>${esc(label)} (${count})</span>`;
+        chip.addEventListener('click', () => {
+          const match = trips.filter(filterFn);
+          if (match.length > 0) {
+            document.getElementById('searchFilter').value = match[0].tripId;
+            applyFilters();
+            openTripDrawerById(match[0].tripId);
+          }
+        });
+        container.appendChild(chip);
+      }
+
+      addChip('ph-clock-countdown', 'Departing <3h', departingSoon.length, 'attention-urgent', t => (parseDateIST(t.onwardDepDateTime) - now <= 3 * 3600000));
+      addChip('ph-ticket', 'Ticket <24h', urgentTickets.length, 'attention-urgent', t => t.ticketStatus !== 'Booked');
+      addChip('ph-user-minus', 'Unassigned', unassigned.length, 'attention-warning', t => !t.assignedTo || t.assignedTo === 'Unassigned');
+      addChip('ph-warning-octagon', 'Overdue Update', overdue.length, 'attention-warning', t => (now - parseDateIST(t.onwardDepDateTime) > 8 * 3600000));
+      addChip('ph-arrows-clockwise', 'Needs Reassignment', reassignment.length, 'attention-urgent', t => t.status === 'Needs reassignment');
+    }
+
+    /* ==========================================================================
+       "I AM..." PERSONALIZATION (C2)
+       ========================================================================== */
+    function populatePersonalizeSelector() {
+      const sel = document.getElementById('personalizeSelector');
+      sel.innerHTML = '<option value="">I am: All Staff</option>';
+      (appData.staff || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.name;
+        opt.innerText = `I am: ${s.name}`;
+        if (s.name === selectedStaffUser) opt.selected = true;
+        sel.appendChild(opt);
       });
     }
 
-    function setCalFilter(mode, btn) {
-      calFilterMode = mode;
-      document.querySelectorAll('.cal-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderCalendar();
+    function renderPersonalizedCard() {
+      const container = document.getElementById('myTripContainer');
+      if (!selectedStaffUser) {
+        container.style.display = 'none';
+        return;
+      }
+
+      const now = new Date();
+      const myTrips = (appData.trips || []).filter(t => t.assignedTo === selectedStaffUser && t.status !== 'Cancelled');
+      let nextMyTrip = null;
+      let minDiff = Infinity;
+
+      myTrips.forEach(t => {
+        const dep = parseDateIST(t.onwardDepDateTime || t.startDate);
+        if (dep && dep > now) {
+          const diff = dep - now;
+          if (diff < minDiff) { minDiff = diff; nextMyTrip = t; }
+        }
+      });
+
+      if (!nextMyTrip) {
+        container.style.display = 'none';
+        return;
+      }
+
+      const depDate = parseDateIST(nextMyTrip.onwardDepDateTime || nextMyTrip.startDate);
+      container.style.display = 'block';
+      container.innerHTML = `
+        <div class="my-trip-card">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:40px; height:40px; border-radius:50%; background:var(--brand-blue); color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px;">
+              <i class="ph-bold ph-train" aria-hidden="true"></i>
+            </div>
+            <div>
+              <div style="font-size:11px; text-transform:uppercase; font-weight:800; color:var(--brand-blue);">My Next Train Trip (${esc(selectedStaffUser)})</div>
+              <div style="font-size:16px; font-weight:800;">${esc(nextMyTrip.destination)} • ${esc(nextMyTrip.onwardTrainNo || '')} ${esc(nextMyTrip.onwardTrainName || 'Express')}</div>
+              <div style="font-size:12px; color:var(--text-muted);">${esc(dayKeyIST(depDate))} at ${esc(fmtTimeIST(depDate))} IST</div>
+            </div>
+          </div>
+          <button class="btn-icon" data-trip-id="${esc(nextMyTrip.tripId)}" aria-label="View details of your next trip">
+            <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      `;
     }
 
+    /* ==========================================================================
+       HERO CARD (A1)
+       ========================================================================== */
+    function renderHero() {
+      const banner = document.getElementById('heroBanner');
+      const trips = (appData.trips || []).filter(t => t.status !== 'Cancelled');
+      const now = new Date();
+
+      let nextTrip = null;
+      let minDiff = Infinity;
+
+      trips.forEach(t => {
+        const depTime = parseDateIST(t.onwardDepDateTime || t.startDate);
+        if (depTime && depTime > now) {
+          const diff = depTime - now;
+          if (diff < minDiff) {
+            minDiff = diff;
+            nextTrip = t;
+          }
+        }
+      });
+
+      if (countdownTimerId) clearInterval(countdownTimerId);
+
+      if (!nextTrip) {
+        banner.innerHTML = `
+          <div>
+            <div class="hero-meta-top"><span class="badge-pill badge-doc"><i class="ph-bold ph-calendar"></i> SCHEDULE CLEAR</span></div>
+            <div class="hero-destination-title">${STRINGS.noUpcoming}</div>
+            <div class="hero-train-strip" style="color:#94A3B8;">All document delivery trips are currently completed.</div>
+          </div>
+          <div class="countdown-pod">
+            <div class="countdown-eyebrow">SYSTEM STATUS</div>
+            <div class="countdown-numbers" style="font-size:24px; color:#34D399;">ALL CLEAR</div>
+            <div class="countdown-footnote"><i class="ph-bold ph-check-circle"></i> Jamshedpur Base</div>
+          </div>
+        `;
+        document.getElementById('stickyMiniCountdown').innerText = "All Clear";
+        return;
+      }
+
+      const isDepartingNow = (minDiff <= 15 * 60 * 1000);
+      const depDateObj = parseDateIST(nextTrip.onwardDepDateTime || nextTrip.startDate);
+      const depTimeStr = fmtTimeIST(depDateObj);
+
+      banner.innerHTML = `
+        <div>
+          <div class="hero-meta-top">
+            <span class="badge-pill ${nextTrip.priority === 'Urgent' ? 'badge-urgent' : 'badge-doc'}">
+              <i class="ph-bold ${nextTrip.priority === 'Urgent' ? 'ph-lightning' : 'ph-ticket'}"></i> ${esc(nextTrip.priority.toUpperCase())}
+            </span>
+            <span class="badge-pill badge-doc"><i class="ph-bold ph-file-text"></i> ${esc(nextTrip.tripId)}</span>
+            <span class="badge-pill badge-doc">${esc(nextTrip.docType || 'Document')}</span>
+            ${isDepartingNow ? '<span class="badge-pill badge-departing-now"><i class="ph-bold ph-broadcast"></i> DEPARTING NOW</span>' : ''}
+          </div>
+          <div class="hero-destination-title">${esc(nextTrip.destination)}</div>
+          <div class="hero-train-strip">
+            <span class="hero-traveller-chip">
+              <i class="ph-fill ph-user-circle" style="color:var(--brand-blue); font-size:16px;"></i> ${esc(nextTrip.assignedTo)}
+            </span>
+            <span><i class="ph-bold ph-train-simple"></i> ${esc(nextTrip.onwardTrainNo || '')} ${esc(nextTrip.onwardTrainName || 'Express')} • Dep: ${esc(depTimeStr)} IST</span>
+            <span class="badge-pill badge-ticket-${getTicketClass(nextTrip.ticketStatus)}">${esc(nextTrip.ticketStatus.toUpperCase())}</span>
+          </div>
+        </div>
+
+        <div class="countdown-pod">
+          <div class="countdown-eyebrow">DEPARTURE COUNTDOWN</div>
+          <div class="countdown-numbers tabular-nums" id="heroCountdownTimer" aria-label="Time remaining until departure">--:--:--</div>
+          <div class="countdown-footnote"><i class="ph-bold ph-map-pin"></i> Tatanagar Jn (TATA)</div>
+        </div>
+      `;
+
+      let lastSpokenAnnounce = '';
+      function tickHero() {
+        const diff = depDateObj.getTime() - new Date().getTime();
+        if (diff <= 0) {
+          const el = document.getElementById('heroCountdownTimer');
+          if (el) el.innerText = STRINGS.departed;
+          document.getElementById('stickyMiniCountdown').innerText = "Departed";
+          clearInterval(countdownTimerId);
+          announceScreenReader("Next train has departed from Tatanagar station.");
+          setTimeout(() => renderHero(), 4000);
+          return;
+        }
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        const str = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        const el = document.getElementById('heroCountdownTimer');
+        if (el) el.innerText = str;
+        document.getElementById('stickyMiniCountdown').innerText = `Next: ${str}`;
+
+        if (h === 1 && m === 0 && s === 0 && lastSpokenAnnounce !== '1h') {
+          announceScreenReader("Attention: Next train departure in 1 hour.");
+          lastSpokenAnnounce = '1h';
+        } else if (h === 0 && m === 15 && s === 0 && lastSpokenAnnounce !== '15m') {
+          announceScreenReader("Attention: Next train departure in 15 minutes.");
+          lastSpokenAnnounce = '15m';
+        }
+      }
+
+      tickHero();
+      countdownTimerId = setInterval(tickHero, 1000);
+    }
+
+    function announceScreenReader(msg) {
+      const el = document.getElementById('srAnnouncer');
+      if (el) el.innerText = msg;
+    }
+
+    function getTicketClass(status) {
+      if (!status) return 'not-booked';
+      const s = status.toLowerCase();
+      if (s.includes('booked')) return 'booked';
+      if (s.includes('rac') || s.includes('waitlist')) return 'rac';
+      if (s.includes('cancel')) return 'cancelled';
+      return 'not-booked';
+    }
+
+    /* ==========================================================================
+       KPIS (A2)
+       ========================================================================== */
+    function renderKPIs() {
+      const trips = appData.trips || [];
+      const currentMonthKey = `${currentCalYear}-${String(currentCalMonth + 1).padStart(2, '0')}`;
+
+      const thisMonthTrips = trips.filter(t => {
+        const d = parseDateIST(t.startDate);
+        return d && dayKeyIST(d).startsWith(currentMonthKey);
+      });
+      document.getElementById('kpiMonthTrips').innerText = thisMonthTrips.length;
+
+      const completed = trips.filter(t => t.status === 'Delivered' || t.status === 'Returned').length;
+      const inTransit = trips.filter(t => t.status === 'In Transit').length;
+      document.getElementById('kpiCompletedTrips').innerText = `${completed} completed • ${inTransit} in transit`;
+
+      let totalKm = 0;
+      const destKmMap = {};
+      (appData.destinations || []).forEach(d => { destKmMap[d.name] = d.roadKm || 250; });
+      trips.forEach(t => {
+        if (t.status !== 'Cancelled') totalKm += (destKmMap[t.destination] || 250);
+      });
+      document.getElementById('kpiTotalKm').innerText = `${totalKm.toLocaleString()} km`;
+
+      let gap = 0;
+      if (appData.stats && appData.stats.fairnessGap !== undefined) {
+        gap = parseFloat(appData.stats.fairnessGap);
+      } else {
+        const loads = {};
+        trips.forEach(t => {
+          if (t.status !== 'Cancelled' && t.assignedTo) loads[t.assignedTo] = (loads[t.assignedTo] || 0) + 1;
+        });
+        const vals = Object.values(loads);
+        if (vals.length > 0) gap = Math.max(...vals) - Math.min(...vals);
+      }
+
+      document.getElementById('kpiFairnessGap').innerText = gap.toFixed(1);
+      const statusContainer = document.getElementById('kpiFairnessStatus');
+      if (gap <= 1.0) {
+        statusContainer.innerHTML = `<span class="status-chip-dot chip-green"></span><span>Balanced (&le; 1.0)</span>`;
+      } else if (gap <= 2.0) {
+        statusContainer.innerHTML = `<span class="status-chip-dot chip-amber"></span><span>Moderate (&le; 2.0)</span>`;
+      } else {
+        statusContainer.innerHTML = `<span class="status-chip-dot chip-red"></span><span>Review allotment</span>`;
+      }
+
+      document.getElementById('kpiActiveStaff').innerText = (appData.staff || []).filter(s => s.active !== false).length;
+    }
+
+    /* ==========================================================================
+       ROTATION CARD (C10)
+       ========================================================================== */
+    function renderRotation() {
+      const container = document.getElementById('rotationQueueList');
+      container.innerHTML = '';
+
+      let queue = [];
+      if (appData.rotation && appData.rotation.queue) {
+        queue = appData.rotation.queue.slice(0, 3);
+      } else {
+        queue = (appData.staff || []).slice(0, 3).map(s => ({
+          name: s.name,
+          weightedLoad: (appData.stats && appData.stats.weightedLoadByStaff) ? (appData.stats.weightedLoadByStaff[s.name] || 0) : 0
+        }));
+      }
+
+      queue.forEach((person, index) => {
+        const row = document.createElement('div');
+        row.className = 'rotation-person-row';
+        const load = parseFloat(person.weightedLoad || 0);
+        const percent = Math.min(100, (load / 6.0) * 100);
+
+        row.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:800; color:${index === 0 ? 'var(--brand-saffron)' : 'var(--text-muted)'};">#${index + 1}</span>
+            <strong>${esc(person.name)}</strong>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="rotation-load-bar-wrap">
+              <div class="rotation-load-bar" style="width:${percent}%;"></div>
+            </div>
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted);">${load.toFixed(1)} wt</span>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    /* ==========================================================================
+       TODAY / TOMORROW LANE (A6)
+       ========================================================================== */
+    function renderLane() {
+      const container = document.getElementById('laneList');
+      container.innerHTML = '';
+      const now = new Date();
+      const todayKey = dayKeyIST(now);
+      const tomorrowKey = dayKeyIST(new Date(now.getTime() + 86400000));
+
+      const todayTrips = [];
+      const tomorrowTrips = [];
+
+      (appData.trips || []).forEach(t => {
+        if (t.status === 'Cancelled') return;
+        const onwardDate = parseDateIST(t.onwardDepDateTime || t.startDate);
+        const returnDate = parseDateIST(t.returnDepDateTime || t.endDate);
+
+        const onwardKey = onwardDate ? dayKeyIST(onwardDate) : '';
+        const returnKey = returnDate ? dayKeyIST(returnDate) : '';
+
+        if (onwardKey === todayKey || returnKey === todayKey) todayTrips.push(t);
+        else if (onwardKey === tomorrowKey || returnKey === tomorrowKey) tomorrowTrips.push(t);
+      });
+
+      const sortByDep = (a, b) => (parseDateIST(a.onwardDepDateTime || a.startDate) - parseDateIST(b.onwardDepDateTime || b.startDate));
+      todayTrips.sort(sortByDep);
+      tomorrowTrips.sort(sortByDep);
+
+      document.getElementById('laneCount').innerText = `${todayTrips.length + tomorrowTrips.length} active`;
+
+      function renderGroup(title, list) {
+        if (list.length === 0) return;
+        const heading = document.createElement('div');
+        heading.className = 'lane-group-heading';
+        heading.innerHTML = `<i class="ph-bold ph-calendar-blank" aria-hidden="true"></i> ${esc(title)}`;
+        container.appendChild(heading);
+
+        list.forEach(t => {
+          const item = document.createElement('div');
+          item.className = 'trip-mini-item';
+          item.style.borderLeftColor = t.staffColour || '#0284C7';
+          item.setAttribute('data-trip-id', t.tripId);
+
+          const onwardDate = parseDateIST(t.onwardDepDateTime || t.startDate);
+          item.innerHTML = `
+            <div class="trip-mini-top">
+              <span class="trip-mini-dest">${esc(t.destination)}</span>
+              <span class="badge-pill" style="background:rgba(2,132,199,0.12); color:var(--brand-blue);">${esc(t.status)}</span>
+            </div>
+            <div class="trip-mini-meta">
+              <span><i class="ph-bold ph-user" aria-hidden="true"></i> ${esc(t.assignedTo)}</span>
+              <span><i class="ph-bold ph-clock" aria-hidden="true"></i> ${esc(fmtTimeIST(onwardDate))} IST</span>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      }
+
+      renderGroup('Today', todayTrips);
+      renderGroup('Tomorrow', tomorrowTrips);
+
+      if (todayTrips.length === 0 && tomorrowTrips.length === 0) {
+        container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:16px 0; text-align:center;">No train departures scheduled today or tomorrow.</div>`;
+      }
+    }
+
+    /* ==========================================================================
+       CALENDAR: MONTH & AGENDA (C7)
+       ========================================================================== */
     function renderCalendar() {
-      const grid = document.getElementById('calendarGrid');
-      grid.innerHTML = '';
+      const monthGrid = document.getElementById('calendarGrid');
+      const agendaList = document.getElementById('calendarAgenda');
+
+      if (calViewMode === 'agenda') {
+        monthGrid.style.display = 'none';
+        agendaList.style.display = 'flex';
+        renderAgendaView();
+        return;
+      }
+
+      monthGrid.style.display = 'grid';
+      agendaList.style.display = 'none';
+
+      monthGrid.innerHTML = '';
       const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       dayNames.forEach(d => {
         const h = document.createElement('div');
         h.className = 'cal-day-header-cell';
         h.innerText = d;
-        grid.appendChild(h);
+        monthGrid.appendChild(h);
       });
 
       const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
@@ -1384,51 +2719,131 @@
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       document.getElementById('calendarMonthTitle').innerText = `${monthNames[currentCalMonth]} ${currentCalYear}`;
 
+      const activeFilterBox = document.getElementById('activeDateFilterContainer');
+      if (selectedDayFilter) {
+        activeFilterBox.innerHTML = `
+          <span class="cal-active-filter-chip" id="clearDayFilterChip">
+            Showing ${esc(selectedDayFilter)} <i class="ph-bold ph-x"></i>
+          </span>
+        `;
+        document.getElementById('clearDayFilterChip').addEventListener('click', () => {
+          selectedDayFilter = null;
+          renderCalendar();
+          applyFilters();
+        });
+      } else {
+        activeFilterBox.innerHTML = '';
+      }
+
       for (let i = 0; i < firstDay; i++) {
         const empty = document.createElement('div');
         empty.style.background = 'transparent';
-        grid.appendChild(empty);
+        monthGrid.appendChild(empty);
       }
 
-      const today = new Date();
+      const todayKey = dayKeyIST(new Date());
+
       for (let day = 1; day <= daysInMonth; day++) {
+        const cellKey = `${currentCalYear}-${String(currentCalMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const cell = document.createElement('div');
         cell.className = 'cal-date-cell';
-        if (today.getDate() === day && today.getMonth() === currentCalMonth && today.getFullYear() === currentCalYear) {
-          cell.classList.add('today-cell');
-        }
+        if (cellKey === todayKey) cell.classList.add('today-cell');
+        if (cellKey === selectedDayFilter) cell.classList.add('selected-day-cell');
 
         cell.innerHTML = `
           <div class="cal-cell-header">
             <span class="cal-day-num">${day}</span>
           </div>
         `;
-        const dateStr = `${String(day).padStart(2, '0')}-${monthNames[currentCalMonth].slice(0, 3)}-${currentCalYear}`;
-        
-        let dayTrips = (appData.trips || []).filter(t => t.startDate && t.startDate.toLowerCase() === dateStr.toLowerCase());
 
-        if (calFilterMode === 'Kolkata') dayTrips = dayTrips.filter(t => t.destination.includes('Kolkata'));
-        else if (calFilterMode === 'Haldia') dayTrips = dayTrips.filter(t => t.destination.includes('Haldia'));
-        else if (calFilterMode === 'Urgent') dayTrips = dayTrips.filter(t => t.priority === 'Urgent');
+        let dayTrips = (appData.trips || []).filter(t => {
+          const d = parseDateIST(t.startDate);
+          return d && dayKeyIST(d) === cellKey;
+        });
+
+        if (calCategoryFilter === 'Kolkata') dayTrips = dayTrips.filter(t => t.destination.includes('Kolkata'));
+        else if (calCategoryFilter === 'Haldia') dayTrips = dayTrips.filter(t => t.destination.includes('Haldia'));
+        else if (calCategoryFilter === 'Urgent') dayTrips = dayTrips.filter(t => t.priority === 'Urgent');
 
         dayTrips.forEach(dt => {
           const chip = document.createElement('div');
           chip.className = 'cal-chip-tag';
           chip.style.backgroundColor = dt.staffColour || '#0284C7';
+          chip.setAttribute('data-trip-id', dt.tripId);
           chip.innerHTML = `
-            <i class="ph-bold ph-train" style="font-size:11px;"></i>
-            <span>${dt.assignedTo.split(' ')[0]}: ${dt.destination}</span>
+            <i class="ph-bold ph-train" style="font-size:10px;"></i>
+            <span>${esc(dt.assignedTo.split(' ')[0])}: ${esc(dt.destination)}</span>
           `;
-          chip.onclick = (e) => { e.stopPropagation(); openTripModal(dt); };
           cell.appendChild(chip);
         });
 
-        cell.onclick = () => {
-          document.getElementById('searchFilter').value = dateStr;
+        cell.addEventListener('click', () => {
+          selectedDayFilter = (selectedDayFilter === cellKey) ? null : cellKey;
+          renderCalendar();
           applyFilters();
-        };
+          flyMapToDayTrips(dayTrips);
+        });
 
-        grid.appendChild(cell);
+        monthGrid.appendChild(cell);
+      }
+    }
+
+    function renderAgendaView() {
+      const container = document.getElementById('calendarAgenda');
+      container.innerHTML = '';
+      const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      document.getElementById('calendarMonthTitle').innerText = `${monthNames[currentCalMonth]} ${currentCalYear} (Agenda)`;
+
+      let hasAnyTrips = false;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cellKey = `${currentCalYear}-${String(currentCalMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        let dayTrips = (appData.trips || []).filter(t => {
+          const d = parseDateIST(t.startDate);
+          return d && dayKeyIST(d) === cellKey;
+        });
+
+        if (calCategoryFilter === 'Kolkata') dayTrips = dayTrips.filter(t => t.destination.includes('Kolkata'));
+        else if (calCategoryFilter === 'Haldia') dayTrips = dayTrips.filter(t => t.destination.includes('Haldia'));
+        else if (calCategoryFilter === 'Urgent') dayTrips = dayTrips.filter(t => t.priority === 'Urgent');
+
+        if (dayTrips.length === 0) continue;
+        hasAnyTrips = true;
+
+        const card = document.createElement('div');
+        card.className = 'agenda-day-card';
+        card.innerHTML = `
+          <div class="agenda-day-header">
+            <span>${day} ${monthNames[currentCalMonth]} ${currentCalYear}</span>
+            <span>${dayTrips.length} Trip${dayTrips.length > 1 ? 's' : ''}</span>
+          </div>
+          <div class="agenda-trips-list" id="agenda-day-${day}"></div>
+        `;
+        container.appendChild(card);
+
+        const listEl = card.querySelector(`#agenda-day-${day}`);
+        dayTrips.forEach(dt => {
+          const item = document.createElement('div');
+          item.className = 'trip-mini-item';
+          item.style.borderLeftColor = dt.staffColour || '#0284C7';
+          item.setAttribute('data-trip-id', dt.tripId);
+          item.innerHTML = `
+            <div class="trip-mini-top">
+              <strong>${esc(dt.destination)} (${esc(dt.tripId)})</strong>
+              <span class="badge-pill" style="background:rgba(2,132,199,0.12); color:var(--brand-blue);">${esc(dt.status)}</span>
+            </div>
+            <div class="trip-mini-meta">
+              <span><i class="ph-bold ph-user"></i> ${esc(dt.assignedTo)}</span>
+              <span><i class="ph-bold ph-train"></i> ${esc(dt.onwardTrainNo || '')} ${esc(dt.onwardTrainName || '')}</span>
+            </div>
+          `;
+          listEl.appendChild(item);
+        });
+      }
+
+      if (!hasAnyTrips) {
+        container.innerHTML = `<div style="padding:24px; text-align:center; color:var(--text-muted); font-size:13px;">No trips scheduled in ${monthNames[currentCalMonth]} matching your filters.</div>`;
       }
     }
 
@@ -1437,399 +2852,551 @@
       if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
       if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; }
       renderCalendar();
+      renderKPIs();
     }
 
+    /* ==========================================================================
+       CHARTS & ACCESSIBILITY TABLES (A3, E)
+       ========================================================================== */
     function renderCharts() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#94A3B8' : '#64748B';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
       const staffCtx = document.getElementById('staffLoadChart');
       if (staffCtx) {
-        const staffNames = appData.staff.map(s => s.name);
-        const loads = staffNames.map(name => appData.trips.filter(t => t.assignedTo === name && t.status !== 'Cancelled').length);
+        const staffList = appData.staff || [];
+        const labels = staffList.map(s => s.name.split(' ')[0]);
+        const colors = staffList.map(s => s.colour || '#0284C7');
 
-        if (staffChart) staffChart.destroy();
-        staffChart = new Chart(staffCtx, {
-          type: 'bar',
-          data: {
-            labels: staffNames.map(n => n.split(' ')[0]),
-            datasets: [{
-              label: 'Trips Assigned',
-              data: loads,
-              backgroundColor: ['#0284C7', '#10B981', '#F97316', '#8B5CF6'],
-              borderRadius: 6
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        const dataValues = staffList.map(s => {
+          if (appData.stats && appData.stats.weightedLoadByStaff && appData.stats.weightedLoadByStaff[s.name] !== undefined) {
+            return appData.stats.weightedLoadByStaff[s.name];
           }
+          return (appData.trips || []).filter(t => t.assignedTo === s.name && t.status !== 'Cancelled').length;
         });
+
+        const staffTableBody = document.querySelector('#staffLoadDataTable tbody');
+        if (staffTableBody) {
+          staffTableBody.innerHTML = '';
+          staffList.forEach((s, idx) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${esc(s.name)}</td><td>${dataValues[idx].toFixed(1)}</td>`;
+            staffTableBody.appendChild(tr);
+          });
+        }
+
+        if (staffChartInstance) {
+          staffChartInstance.data.labels = labels;
+          staffChartInstance.data.datasets[0].data = dataValues;
+          staffChartInstance.data.datasets[0].backgroundColor = colors;
+          staffChartInstance.options.scales.x.ticks.color = textColor;
+          staffChartInstance.options.scales.y.ticks.color = textColor;
+          staffChartInstance.options.scales.y.grid.color = gridColor;
+          staffChartInstance.update();
+        } else {
+          staffChartInstance = new Chart(staffCtx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{ label: 'Weighted Load', data: dataValues, backgroundColor: colors, borderRadius: 6 }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { ticks: { color: textColor } },
+                y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }
+              }
+            }
+          });
+        }
       }
 
       const destCtx = document.getElementById('destDonutChart');
       if (destCtx) {
         const destCounts = {};
-        appData.trips.forEach(t => { destCounts[t.destination] = (destCounts[t.destination] || 0) + 1; });
-
-        if (destChart) destChart.destroy();
-        destChart = new Chart(destCtx, {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(destCounts),
-            datasets: [{
-              data: Object.values(destCounts),
-              backgroundColor: ['#0284C7', '#10B981', '#F97316', '#6366F1']
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } }
-          }
+        (appData.trips || []).forEach(t => {
+          if (t.status !== 'Cancelled') destCounts[t.destination] = (destCounts[t.destination] || 0) + 1;
         });
+
+        const destLabels = Object.keys(destCounts);
+        const destValues = Object.values(destCounts);
+
+        const destTableBody = document.querySelector('#destDataTable tbody');
+        if (destTableBody) {
+          destTableBody.innerHTML = '';
+          destLabels.forEach((dName, idx) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${esc(dName)}</td><td>${destValues[idx]}</td>`;
+            destTableBody.appendChild(tr);
+          });
+        }
+
+        if (destChartInstance) {
+          destChartInstance.data.labels = destLabels;
+          destChartInstance.data.datasets[0].data = destValues;
+          destChartInstance.options.plugins.legend.labels.color = textColor;
+          destChartInstance.update();
+        } else {
+          destChartInstance = new Chart(destCtx, {
+            type: 'doughnut',
+            data: {
+              labels: destLabels,
+              datasets: [{ data: destValues, backgroundColor: ['#0284C7', '#10B981', '#F97316', '#8B5CF6', '#F59E0B'] }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 12 } } }
+            }
+          });
+        }
       }
     }
 
+    /* ==========================================================================
+       DROPDOWNS, TABLE & STACKED CARDS (A4, A7, A9, C8, D)
+       ========================================================================== */
     function populateDropdowns() {
       const staffSel = document.getElementById('staffFilter');
       const destSel = document.getElementById('destFilter');
-      if (staffSel.options.length <= 1) {
-        appData.staff.forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s.name;
-          opt.innerText = s.name;
-          staffSel.appendChild(opt);
-        });
-      }
-      if (destSel.options.length <= 1) {
-        appData.destinations.forEach(d => {
-          const opt = document.createElement('option');
-          opt.value = d.name;
-          opt.innerText = d.name;
-          destSel.appendChild(opt);
-        });
-      }
+
+      const curStaff = staffSel.value;
+      const curDest = destSel.value;
+
+      staffSel.innerHTML = '<option value="">All Staff</option>';
+      (appData.staff || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.name;
+        opt.innerText = s.name;
+        staffSel.appendChild(opt);
+      });
+      staffSel.value = curStaff;
+
+      destSel.innerHTML = '<option value="">All Destinations</option>';
+      (appData.destinations || []).forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.name;
+        opt.innerText = d.name;
+        destSel.appendChild(opt);
+      });
+      destSel.value = curDest;
     }
 
     function applyFilters() {
-      const q = document.getElementById('searchFilter').value.toLowerCase();
-      const staffVal = document.getElementById('staffFilter').value;
+      const q = (document.getElementById('searchFilter').value || '').toLowerCase();
+      let staffVal = document.getElementById('staffFilter').value;
+      if (selectedStaffUser && !staffVal) staffVal = selectedStaffUser;
+
       const destVal = document.getElementById('destFilter').value;
       const statusVal = document.getElementById('statusFilter').value;
 
-      const filtered = (appData.trips || []).filter(t => {
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      if (staffVal) params.set('staff', staffVal);
+      if (destVal) params.set('dest', destVal);
+      if (statusVal) params.set('status', statusVal);
+      if (selectedDayFilter) params.set('day', selectedDayFilter);
+      window.location.hash = params.toString() ? '#' + params.toString() : '';
+
+      renderFilterChipsTray(q, staffVal, destVal, statusVal);
+
+      let filtered = (appData.trips || []).filter(t => {
         const mQ = !q || t.tripId.toLowerCase().includes(q) || t.destination.toLowerCase().includes(q) || t.assignedTo.toLowerCase().includes(q);
         const mS = !staffVal || t.assignedTo === staffVal;
         const mD = !destVal || t.destination === destVal;
         const mSt = !statusVal || t.status === statusVal;
-        return mQ && mS && mD && mSt;
+
+        let mDay = true;
+        if (selectedDayFilter) {
+          const d = parseDateIST(t.startDate);
+          mDay = d && (dayKeyIST(d) === selectedDayFilter);
+        }
+
+        return mQ && mS && mD && mSt && mDay;
+      });
+
+      filtered.sort((a, b) => {
+        let valA = a[tableSortCol] || '';
+        let valB = b[tableSortCol] || '';
+        if (tableSortCol === 'date') {
+          valA = parseDateIST(a.startDate) || 0;
+          valB = parseDateIST(b.startDate) || 0;
+        }
+        if (valA < valB) return tableSortAsc ? -1 : 1;
+        if (valA > valB) return tableSortAsc ? 1 : -1;
+        return 0;
       });
 
       const tbody = document.getElementById('tripsTableBody');
-      tbody.innerHTML = '';
+      const tableFragment = document.createDocumentFragment();
+
+      const cardsBody = document.getElementById('tripsMobileCardsBody');
+      const cardsFragment = document.createDocumentFragment();
 
       filtered.forEach(t => {
+        const startDateObj = parseDateIST(t.startDate);
+        const dateStr = startDateObj ? `${String(startDateObj.getUTCDate()).padStart(2, '0')}-${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][startDateObj.getUTCMonth()]}-${startDateObj.getUTCFullYear()}` : t.startDate;
+
+        let ticketBadgeClass = `badge-ticket-${getTicketClass(t.ticketStatus)}`;
+        let ticketLabel = esc(t.ticketStatus);
+        const depDate = parseDateIST(t.onwardDepDateTime || t.startDate);
+        if (depDate && t.ticketStatus === 'Not booked') {
+          const hoursLeft = (depDate.getTime() - new Date().getTime()) / 3600000;
+          if (hoursLeft > 0 && hoursLeft <= 24) {
+            ticketBadgeClass = 'badge-ticket-urgent-unbooked';
+            ticketLabel = 'Book now (<24h)';
+          }
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td style="font-family:var(--font-mono); font-weight:700;">${t.tripId}</td>
-          <td><strong>${t.destination}</strong></td>
-          <td>${t.startDate}</td>
+          <td style="font-family:var(--font-mono); font-weight:700;">${esc(t.tripId)}</td>
+          <td><strong>${esc(t.destination)}</strong></td>
+          <td>${esc(dateStr)}</td>
           <td>
-            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${t.staffColour}; margin-right:6px;"></span>
-            ${t.assignedTo}
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${esc(t.staffColour || '#0284C7')}; margin-right:6px;"></span>
+            ${esc(t.assignedTo)}
           </td>
-          <td><span class="badge-pill ${t.priority === 'Urgent' ? 'badge-urgent' : 'badge-doc'}">${t.priority}</span></td>
-          <td>${t.onwardTrainNo}</td>
-          <td>${t.ticketStatus}</td>
-          <td><span class="badge-pill" style="background:rgba(2,132,199,0.1); color:var(--brand-blue);">${t.status}</span></td>
+          <td><span class="badge-pill ${t.priority === 'Urgent' ? 'badge-urgent' : 'badge-doc'}">${esc(t.priority)}</span></td>
+          <td>${esc(t.onwardTrainNo || '')}</td>
+          <td><span class="badge-pill ${ticketBadgeClass}">${ticketLabel}</span></td>
+          <td><span class="badge-pill" style="background:rgba(2,132,199,0.1); color:var(--brand-blue);">${esc(t.status)}</span></td>
           <td>
-            <button class="btn-icon" style="width:28px; height:28px; font-size:12px;" onclick='openTripModal(${JSON.stringify(t)})'><i class="ph-bold ph-eye"></i></button>
+            <button class="btn-icon" style="min-width:32px; min-height:32px; width:32px; height:32px; font-size:13px;" data-trip-id="${esc(t.tripId)}" aria-label="View details of trip ${esc(t.tripId)}">
+              <i class="ph-bold ph-eye"></i>
+            </button>
           </td>
         `;
-        tbody.appendChild(tr);
+        tableFragment.appendChild(tr);
+
+        const card = document.createElement('div');
+        card.className = 'trip-card-mobile';
+        card.setAttribute('data-trip-id', t.tripId);
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-family:var(--font-mono); font-weight:700; font-size:12px;">${esc(t.tripId)}</span>
+            <span class="badge-pill ${t.priority === 'Urgent' ? 'badge-urgent' : 'badge-doc'}">${esc(t.priority)}</span>
+          </div>
+          <div style="font-size:16px; font-weight:800;">${esc(t.destination)}</div>
+          <div style="font-size:12.5px; color:var(--text-muted); display:flex; justify-content:space-between;">
+            <span><i class="ph-bold ph-user"></i> ${esc(t.assignedTo)}</span>
+            <span><i class="ph-bold ph-calendar"></i> ${esc(dateStr)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            <span class="badge-pill ${ticketBadgeClass}">${ticketLabel}</span>
+            <span class="badge-pill" style="background:rgba(2,132,199,0.1); color:var(--brand-blue);">${esc(t.status)}</span>
+          </div>
+        `;
+        cardsFragment.appendChild(card);
       });
+
+      tbody.innerHTML = '';
+      tbody.appendChild(tableFragment);
+
+      cardsBody.innerHTML = '';
+      cardsBody.appendChild(cardsFragment);
     }
 
-    function initHighGraphicsMap() {
-      if (appData.mapboxToken && typeof mapboxgl !== 'undefined') {
+    function renderFilterChipsTray(q, staffVal, destVal, statusVal) {
+      const tray = document.getElementById('activeFilterChipsTray');
+      tray.innerHTML = '';
+
+      function addChip(label, onClear) {
+        const chip = document.createElement('span');
+        chip.className = 'cal-active-filter-chip';
+        chip.innerHTML = `${esc(label)} <i class="ph-bold ph-x"></i>`;
+        chip.addEventListener('click', onClear);
+        tray.appendChild(chip);
+      }
+
+      if (q) addChip(`Search: "${q}"`, () => { document.getElementById('searchFilter').value = ''; applyFilters(); });
+      if (staffVal) addChip(`Staff: ${staffVal}`, () => { document.getElementById('staffFilter').value = ''; applyFilters(); });
+      if (destVal) addChip(`Dest: ${destVal}`, () => { document.getElementById('destFilter').value = ''; applyFilters(); });
+      if (statusVal) addChip(`Status: ${statusVal}`, () => { document.getElementById('statusFilter').value = ''; applyFilters(); });
+      if (selectedDayFilter) addChip(`Date: ${selectedDayFilter}`, () => { selectedDayFilter = null; applyFilters(); renderCalendar(); });
+    }
+
+    /* ==========================================================================
+       MAP & RESILIENCE (C3)
+       ========================================================================== */
+    function initSchematicMap() {
+      const token = (appData.config && appData.config.mapboxToken) ? appData.config.mapboxToken : (appData.mapboxToken || '');
+
+      if (token && typeof mapboxgl !== 'undefined' && mapType !== 'mapbox' && !isMapLite) {
         try {
-          if (!map || mapType !== 'mapbox') {
-            mapboxgl.accessToken = appData.mapboxToken;
-            map = new mapboxgl.Map({
-              container: 'map',
-              style: 'mapbox://styles/mapbox/satellite-streets-v12',
-              center: [87.4, 22.45],
-              zoom: 7.6,
-              pitch: 58,
-              bearing: -12
+          mapboxgl.accessToken = token;
+          map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',
+            center: [87.4, 22.45],
+            zoom: 7.5,
+            pitch: 55
+          });
+
+          map.on('style.load', () => {
+            map.addSource('hwh-rail-track', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: TATA_TO_HOWRAH_TRACK } } });
+            map.addSource('hlz-rail-track', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: KGP_TO_HALDIA_TRACK } } });
+
+            map.addLayer({ id: 'hwh-track-line', type: 'line', source: 'hwh-rail-track', paint: { 'line-color': '#0284C7', 'line-width': 4, 'line-dasharray': [2, 1] } });
+            map.addLayer({ id: 'hlz-track-line', type: 'line', source: 'hlz-rail-track', paint: { 'line-color': '#F59E0B', 'line-width': 4, 'line-dasharray': [2, 1] } });
+
+            REAL_STATIONS.forEach(s => {
+              const el = document.createElement('div');
+              el.className = 'gmap-station-pill';
+              el.innerHTML = `<div class="gmap-dot" style="background:${esc(s.color)};"></div><span>${esc(s.name)}</span>`;
+              new mapboxgl.Marker({ element: el }).setLngLat(s.coords).addTo(map);
             });
+          });
 
-            map.on('style.load', () => {
-              map.addSource('mapbox-dem', {
-                'type': 'raster-dem',
-                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                'tileSize': 512,
-                'maxzoom': 14
-              });
-              map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.4 });
-
-              map.addLayer({
-                'id': 'sky',
-                'type': 'sky',
-                'paint': {
-                  'sky-type': 'atmosphere',
-                  'sky-atmosphere-sun': [0.0, 90.0],
-                  'sky-atmosphere-sun-intensity': 15
-                }
-              });
-
-              map.addSource('hwh-rail-track', {
-                'type': 'geojson',
-                'data': { 'type': 'Feature', 'geometry': { 'type': 'LineString', 'coordinates': TATA_TO_HOWRAH_TRACK } }
-              });
-
-              map.addSource('hlz-rail-track', {
-                'type': 'geojson',
-                'data': { 'type': 'Feature', 'geometry': { 'type': 'LineString', 'coordinates': KGP_TO_HALDIA_TRACK } }
-              });
-
-              map.addLayer({
-                'id': 'hwh-track-line',
-                'type': 'line',
-                'source': 'hwh-rail-track',
-                'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                'paint': { 'line-color': '#0284C7', 'line-width': 4.5, 'line-dasharray': [2, 1] }
-              });
-
-              map.addLayer({
-                'id': 'hlz-track-line',
-                'type': 'line',
-                'source': 'hlz-rail-track',
-                'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                'paint': { 'line-color': '#F59E0B', 'line-width': 4.5, 'line-dasharray': [2, 1] }
-              });
-
-              REAL_STATIONS.forEach(s => {
-                const el = document.createElement('div');
-                el.className = 'gmap-station-pill';
-                el.innerHTML = `
-                  <div class="gmap-dot" style="background:${s.color};"></div>
-                  <span>${s.name}</span>
-                `;
-                new mapboxgl.Marker({ element: el })
-                  .setLngLat(s.coords)
-                  .addTo(map);
-              });
-            });
-
-            mapType = 'mapbox';
-            return;
-          }
-        } catch (e) {
-          console.warn("Mapbox fallback to Leaflet:", e);
+          mapType = 'mapbox';
+          return;
+        } catch (err) {
+          initLeafletFallback();
         }
       }
 
+      initLeafletFallback();
+    }
+
+    function initLeafletFallback() {
       if (!map || mapType !== 'leaflet') {
         document.getElementById('map').innerHTML = '';
         map = L.map('map').setView([22.45, 87.35], 8);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Esri Satellite Rail View',
+          attribution: 'Esri Satellite Rail View (Schematic)',
           maxZoom: 18
         }).addTo(map);
 
         const leafHwhTrack = TATA_TO_HOWRAH_TRACK.map(c => [c[1], c[0]]);
         const leafHlzTrack = KGP_TO_HALDIA_TRACK.map(c => [c[1], c[0]]);
 
-        L.polyline(leafHwhTrack, { color: '#0F172A', weight: 6, opacity: 0.6 }).addTo(map);
-        L.polyline(leafHwhTrack, { color: '#0284C7', weight: 3.5, dashArray: '8, 6' }).addTo(map);
-
-        L.polyline(leafHlzTrack, { color: '#78350F', weight: 6, opacity: 0.6 }).addTo(map);
-        L.polyline(leafHlzTrack, { color: '#F59E0B', weight: 3.5, dashArray: '8, 6' }).addTo(map);
+        L.polyline(leafHwhTrack, { color: '#0284C7', weight: 4, dashArray: '6, 6' }).addTo(map);
+        L.polyline(leafHlzTrack, { color: '#F59E0B', weight: 4, dashArray: '6, 6' }).addTo(map);
 
         REAL_STATIONS.forEach(s => {
-          const customIcon = L.divIcon({
+          const icon = L.divIcon({
             className: 'gmap-leaflet-wrapper',
-            html: `
-              <div class="gmap-station-pill" style="border-color:${s.color};">
-                <div class="gmap-dot" style="background:${s.color};"></div>
-                <span>${s.name}</span>
-              </div>
-            `,
-            iconSize: [120, 30],
-            iconAnchor: [60, 15]
+            html: `<div class="gmap-station-pill" style="border-color:${esc(s.color)};"><div class="gmap-dot" style="background:${esc(s.color)};"></div><span>${esc(s.name)}</span></div>`,
+            iconSize: [120, 28],
+            iconAnchor: [60, 14]
           });
-
-          L.marker([s.coords[1], s.coords[0]], { icon: customIcon })
-            .addTo(map)
-            .bindPopup(`<b>${s.name}</b><br><small>${s.subtitle}</small>`);
+          L.marker([s.coords[1], s.coords[0]], { icon: icon }).addTo(map).bindPopup(`<b>${esc(s.name)}</b><br><small>${esc(s.subtitle)}</small>`);
         });
 
         mapType = 'leaflet';
       }
     }
 
-    function resetMapView() {
-      if (mapType === 'mapbox' && map) map.flyTo({ center: [87.4, 22.45], zoom: 7.6, pitch: 58 });
-      else if (mapType === 'leaflet' && map) map.setView([22.45, 87.35], 8);
+    function toggleMapLite() {
+      isMapLite = !isMapLite;
+      document.getElementById('mapLiteText').innerText = isMapLite ? "2D" : "3D";
+      if (mapType === 'mapbox' && map) {
+        map.easeTo({ pitch: isMapLite ? 0 : 55 });
+      } else {
+        showToast(isMapLite ? "Lite 2D Map Active" : "3D Mode Active");
+      }
     }
 
-    function toggleMapPitch() {
-      if (mapType === 'mapbox' && map) map.easeTo({ pitch: map.getPitch() > 20 ? 0 : 58 });
+    function toggleMapFly() {
+      if (isFlying) {
+        if (flyInterval) clearInterval(flyInterval);
+        isFlying = false;
+        document.getElementById('mapFlyBtn').innerHTML = `<i class="ph-bold ph-airplane-takeoff"></i> <span>Fly</span>`;
+        return;
+      }
+
+      isFlying = true;
+      document.getElementById('mapFlyBtn').innerHTML = `<i class="ph-bold ph-stop"></i> <span>Stop</span>`;
+      let step = 0;
+      const coords = TATA_TO_HOWRAH_TRACK;
+
+      flyInterval = setInterval(() => {
+        if (step >= coords.length) {
+          clearInterval(flyInterval);
+          isFlying = false;
+          document.getElementById('mapFlyBtn').innerHTML = `<i class="ph-bold ph-airplane-takeoff"></i> <span>Fly</span>`;
+          return;
+        }
+        const pt = coords[step];
+        if (mapType === 'mapbox' && map) map.panTo(pt, { duration: 1200 });
+        else if (mapType === 'leaflet' && map) map.panTo([pt[1], pt[0]], { animate: true });
+        step++;
+      }, 1400);
     }
 
-    function openTripModal(t) {
-      document.getElementById('modalTripId').innerText = t.tripId;
-      document.getElementById('modalPriority').innerText = t.priority.toUpperCase();
-      document.getElementById('modalTitle').innerText = `${t.destination} (${t.docType || 'Document'})`;
-      document.getElementById('modalTraveller').innerText = t.assignedTo;
-      document.getElementById('modalDate').innerText = t.startDate;
-      document.getElementById('modalOnwardTrain').innerText = `${t.onwardTrainNo} ${t.onwardTrainName}`;
-      document.getElementById('modalTicketStatus').innerText = `${t.ticketStatus} (${t.travelClass || 'CC'})`;
+    function toggleMapFullscreen() {
+      const wrapper = document.getElementById('mapCardWrapper');
+      if (!document.fullscreenElement) {
+        wrapper.requestFullscreen().catch(() => { });
+      } else {
+        document.exitFullscreen().catch(() => { });
+      }
+    }
 
-      document.getElementById('modalTimeline').innerHTML = `
-        <div><i class="ph-bold ph-check-circle" style="color:#10B981;"></i> <strong>Requested:</strong> ${t.source} (${t.lastUpdated})</div>
-        <div><i class="ph-bold ph-check-circle" style="color:#10B981;"></i> <strong>Assigned:</strong> ${t.assignedTo} (Mode: ${t.assignMode})</div>
-        <div><i class="ph-bold ${t.ticketStatus === 'Booked' ? 'ph-check-circle' : 'ph-clock'}" style="color:${t.ticketStatus === 'Booked' ? '#10B981' : '#F59E0B'};"></i> <strong>Ticket Status:</strong> ${t.ticketStatus}</div>
-        <div><i class="ph-bold ph-circle" style="color:var(--text-muted);"></i> <strong>Current Status:</strong> ${t.status}</div>
+    function flyMapToDayTrips(trips) {
+      if (!trips || trips.length === 0 || !map) return;
+      const dest = trips[0].destination;
+      const coords = dest.includes('Haldia') ? [88.06, 22.06] : [88.36, 22.57];
+      if (mapType === 'leaflet') map.flyTo([coords[1], coords[0]], 9);
+      else if (mapType === 'mapbox') map.flyTo({ center: coords, zoom: 9 });
+    }
+
+    /* ==========================================================================
+       DRAWER & ACTIONS (C4)
+       ========================================================================== */
+    function openTripDrawerById(tripId) {
+      const t = (appData.trips || []).find(item => item.tripId === tripId);
+      if (!t) return;
+      activeOpenedTrip = t;
+
+      document.getElementById('drawerTripId').innerText = t.tripId;
+      document.getElementById('drawerPriority').innerText = t.priority.toUpperCase();
+      document.getElementById('drawerTitle').innerText = t.destination;
+      document.getElementById('drawerPurpose').innerText = t.purpose || 'Document delivery';
+      document.getElementById('drawerTraveller').innerHTML = `
+        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${esc(t.staffColour || '#0284C7')};"></span>
+        ${esc(t.assignedTo)}
       `;
 
-      document.getElementById('tripModal').classList.add('open');
+      document.getElementById('drawerOnwardTrain').innerText = `${t.onwardTrainNo || ''} ${t.onwardTrainName || 'Express'}`;
+      const onwardDep = parseDateIST(t.onwardDepDateTime);
+      const onwardArr = parseDateIST(t.onwardArrDateTime);
+      document.getElementById('drawerOnwardTime').innerText = `Dep: ${fmtTimeIST(onwardDep)} IST | Arr: ${fmtTimeIST(onwardArr)} IST`;
+
+      document.getElementById('drawerReturnTrain').innerText = t.returnTrainNo ? `${t.returnTrainNo} ${t.returnTrainName || ''}` : 'Return booking pending';
+      const returnDep = parseDateIST(t.returnDepDateTime);
+      const returnArr = parseDateIST(t.returnArrDateTime);
+      document.getElementById('drawerReturnTime').innerText = returnDep ? `Dep: ${fmtTimeIST(returnDep)} IST | Arr: ${fmtTimeIST(returnArr)} IST` : '--';
+
+      const stages = ['Requested', 'Assigned', 'Ticket booked', 'Departed', 'Reached', 'Delivered', 'Returned'];
+      const stepper = document.getElementById('drawerStepper');
+      stepper.innerHTML = '';
+
+      let curIndex = stages.indexOf(t.status);
+      if (curIndex === -1) {
+        if (t.ticketStatus === 'Booked') curIndex = 2;
+        else if (t.assignedTo) curIndex = 1;
+        else curIndex = 0;
+      }
+
+      stages.forEach((stg, i) => {
+        const item = document.createElement('div');
+        item.className = 'step-item';
+        if (i < curIndex) item.classList.add('completed');
+        else if (i === curIndex) item.classList.add('current');
+
+        const stepLog = (t.timeline || []).find(x => x.step.toLowerCase() === stg.toLowerCase());
+        const timestamp = stepLog ? stepLog.at : (i <= curIndex ? 'Logged' : 'Pending');
+
+        item.innerHTML = `
+          <div class="step-dot">${i < curIndex ? '<i class="ph-bold ph-check"></i>' : (i + 1)}</div>
+          <div class="step-info">
+            <div class="step-title">${esc(stg)}</div>
+            <div class="step-time">${esc(timestamp)}</div>
+          </div>
+        `;
+        stepper.appendChild(item);
+      });
+
+      const shareText = encodeURIComponent(
+        `Swift Trip Planner: ${t.tripId}\nTraveller: ${t.assignedTo}\nDestination: ${t.destination}\nTrain: ${t.onwardTrainNo || ''} ${t.onwardTrainName || ''}\nStatus: ${t.status}`
+      );
+      document.getElementById('btnShareWhatsApp').href = `https://wa.me/?text=${shareText}`;
+
+      document.getElementById('tripDrawerVeil').classList.add('open');
+      document.getElementById('drawerCloseBtn').focus();
     }
 
-    function closeTripModal() {
-      document.getElementById('tripModal').classList.remove('open');
+    function closeDrawer() {
+      document.getElementById('tripDrawerVeil').classList.remove('open');
     }
 
+    function downloadICSCalendar() {
+      if (!activeOpenedTrip) return;
+      const t = activeOpenedTrip;
+      const start = parseDateIST(t.onwardDepDateTime || t.startDate) || new Date();
+      const end = parseDateIST(t.returnArrDateTime || t.endDate) || new Date(start.getTime() + 12 * 3600000);
+
+      const toICSDate = (d) => d.toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Swift Strips India//Trip Planner//EN',
+        'BEGIN:VEVENT',
+        `UID:${t.tripId}@swiftstrips.com`,
+        `DTSTAMP:${toICSDate(new Date())}`,
+        `DTSTART:${toICSDate(start)}`,
+        `DTEND:${toICSDate(end)}`,
+        `SUMMARY:Swift Trip: ${t.destination} (${t.assignedTo})`,
+        `DESCRIPTION:${t.purpose || 'Document delivery'}. Train: ${t.onwardTrainNo || ''} ${t.onwardTrainName || ''}`,
+        `LOCATION:${t.destination}`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `${t.tripId}.ics`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast(STRINGS.downloadedICS);
+    }
+
+    function copyTripSummary() {
+      if (!activeOpenedTrip) return;
+      const t = activeOpenedTrip;
+      const summary = `Trip ID: ${t.tripId} | ${t.destination} | Traveller: ${t.assignedTo} | Train: ${t.onwardTrainNo || ''} ${t.onwardTrainName || ''} | Status: ${t.status}`;
+      navigator.clipboard.writeText(summary).then(() => {
+        showToast(STRINGS.copied);
+      });
+    }
+
+    /* ==========================================================================
+       WHATSAPP REQUEST FAB (C5)
+       ========================================================================== */
+    function renderWhatsAppFAB() {
+      const fab = document.getElementById('waRequestFab');
+      const num = (appData.config && appData.config.whatsappRequestNumber) ? appData.config.whatsappRequestNumber.replace(/[^0-9]/g, '') : '';
+      if (!num) {
+        fab.style.display = 'none';
+        return;
+      }
+      const todayStr = dayKeyIST(new Date());
+      fab.href = `https://wa.me/${num}?text=${encodeURIComponent("Kolkata " + todayStr)}`;
+      fab.style.display = 'flex';
+    }
+
+    /* ==========================================================================
+       THEME & TOAST
+       ========================================================================== */
     function showToast(msg) {
       const tray = document.getElementById('toastTray');
       const toast = document.createElement('div');
       toast.className = 'toast-msg';
-      toast.innerHTML = `<i class="ph-fill ph-bell-ringing" style="color:var(--brand-saffron); font-size:18px;"></i> <span>${msg}</span>`;
+      toast.innerHTML = `<i class="ph-fill ph-bell-ringing" style="color:var(--brand-saffron); font-size:16px;" aria-hidden="true"></i> <span>${esc(msg)}</span>`;
       tray.appendChild(toast);
       setTimeout(() => toast.remove(), 4000);
     }
 
-    function generateMockData() {
-      return {
-        trips: [
-          {
-            tripId: "TRP-2026-11-001",
-            purpose: "Customs & Port clearances",
-            docType: "Customs",
-            destination: "Kolkata Port",
-            startDate: "25-Nov-2026",
-            endDate: "25-Nov-2026",
-            priority: "Urgent",
-            assignedTo: "Mohit Saw",
-            staffColour: "#0284C7",
-            assignMode: "AUTO",
-            status: "In Transit",
-            travelMode: "Train",
-            fromStation: "TATA",
-            toStation: "HWH",
-            onwardTrainNo: "12814",
-            onwardTrainName: "Steel Express",
-            onwardDepDateTime: "2026-11-25T06:10:00",
-            ticketStatus: "Booked",
-            travelClass: "CC",
-            source: "WHATSAPP",
-            lastUpdated: "2026-11-24T12:00:00"
-          },
-          {
-            tripId: "TRP-2026-11-002",
-            purpose: "Bank Guarantee submission",
-            docType: "Bank",
-            destination: "Kolkata",
-            startDate: "26-Nov-2026",
-            endDate: "26-Nov-2026",
-            priority: "Normal",
-            assignedTo: "Dablu Pandit",
-            staffColour: "#10B981",
-            assignMode: "AUTO",
-            status: "Assigned",
-            travelMode: "Train",
-            fromStation: "TATA",
-            toStation: "HWH",
-            onwardTrainNo: "12814",
-            onwardTrainName: "Steel Express",
-            onwardDepDateTime: "2026-11-26T06:10:00",
-            ticketStatus: "Booked",
-            travelClass: "CC",
-            source: "SHEET",
-            lastUpdated: "2026-11-24T12:00:00"
-          },
-          {
-            tripId: "TRP-2026-11-003",
-            purpose: "Plant consignment LC delivery",
-            docType: "LC",
-            destination: "Haldia",
-            startDate: "28-Nov-2026",
-            endDate: "28-Nov-2026",
-            priority: "Normal",
-            assignedTo: "Suraj Kumar",
-            staffColour: "#F97316",
-            assignMode: "AUTO",
-            status: "Planned",
-            travelMode: "Train",
-            fromStation: "TATA",
-            toStation: "HLZ",
-            onwardTrainNo: "18616",
-            onwardTrainName: "Kriya Yoga Exp",
-            onwardDepDateTime: "2026-11-28T07:15:00",
-            ticketStatus: "Not booked",
-            travelClass: "3A",
-            source: "WHATSAPP",
-            lastUpdated: "2026-11-24T12:00:00"
-          },
-          {
-            tripId: "TRP-2026-11-004",
-            purpose: "Dock clearance verification",
-            docType: "Customs",
-            destination: "Haldia Dock",
-            startDate: "30-Nov-2026",
-            endDate: "30-Nov-2026",
-            priority: "Normal",
-            assignedTo: "Abhinas",
-            staffColour: "#8B5CF6",
-            assignMode: "AUTO",
-            status: "Planned",
-            travelMode: "Train",
-            fromStation: "TATA",
-            toStation: "HLZ",
-            onwardTrainNo: "18616",
-            onwardTrainName: "Kriya Yoga Exp",
-            onwardDepDateTime: "2026-11-30T07:15:00",
-            ticketStatus: "Not booked",
-            travelClass: "CC",
-            source: "SHEET",
-            lastUpdated: "2026-11-24T12:00:00"
-          }
-        ],
-        destinations: [
-          { name: "Kolkata", lat: 22.5726, lng: 88.3639, roadKm: 250, weight: 1.0 },
-          { name: "Haldia", lat: 22.0667, lng: 88.0698, roadKm: 260, weight: 1.2 },
-          { name: "Kolkata Port", lat: 22.5458, lng: 88.3224, roadKm: 255, weight: 1.3 },
-          { name: "Haldia Dock", lat: 22.0300, lng: 88.0900, roadKm: 265, weight: 1.3 }
-        ],
-        stations: [
-          { code: "TATA", name: "Tatanagar Jn", city: "Jamshedpur", lat: 22.7719, lng: 86.2006 },
-          { code: "KGP", name: "Kharagpur Jn", city: "Kharagpur", lat: 22.3398, lng: 87.3256 },
-          { code: "HWH", name: "Howrah Jn", city: "Kolkata", lat: 22.5839, lng: 88.3426 },
-          { code: "SRC", name: "Santragachi Jn", city: "Howrah", lat: 22.5828, lng: 88.2779 }
-        ],
-        staff: [
-          { name: "Mohit Saw", role: "Staff", active: true, colour: "#0284C7" },
-          { name: "Dablu Pandit", role: "Staff", active: true, colour: "#10B981" },
-          { name: "Suraj Kumar", role: "Staff", active: true, colour: "#F97316" },
-          { name: "Abhinas", role: "Staff", active: true, colour: "#8B5CF6" }
-        ],
-        nextInRotation: "Mohit Saw",
-        mapboxToken: "",
-        workingDays: "Mon,Tue,Wed,Thu,Fri,Sat",
-        timestamp: new Date().toISOString()
-      };
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', newTheme);
+      updateThemeIcon(!isDark);
+      try { localStorage.setItem('swift_theme', newTheme); } catch (e) { }
+      renderCharts();
+    }
+
+    function updateThemeIcon(isDark) {
+      document.getElementById('themeIcon').className = isDark ? 'ph-bold ph-sun' : 'ph-bold ph-moon';
     }
   </script>
 </body>
+
 </html>
