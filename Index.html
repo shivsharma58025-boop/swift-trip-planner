@@ -1,10 +1,1835 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="refresh" content="0; url=Index.html" />
-  <script>window.location.href = "Index.html";</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Swift Trip Planner | Swift Strips India Pvt. Ltd.</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Mapbox GL JS v3 CDN -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+
+  <!-- Leaflet Fallback CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    :root {
+      --brand-navy: #0A192F;
+      --brand-blue: #0284C7;
+      --brand-accent: #2563EB;
+      --brand-saffron: #F97316;
+      --brand-green: #10B981;
+      
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --card-border: #E2E8F0;
+      --card-subtle: #F1F5F9;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      
+      --urgent: #EF4444;
+      --urgent-light: #FEE2E2;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 10px 25px -5px rgba(10,25,47,0.08), 0 8px 10px -6px rgba(10,25,47,0.04);
+      --shadow-lg: 0 20px 35px -10px rgba(10,25,47,0.14);
+      
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #030712;
+      --card-bg: #0F172A;
+      --card-border: #1E293B;
+      --card-subtle: #131E33;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      
+      --brand-navy: #0F172A;
+      --brand-blue: #38BDF8;
+      --brand-accent: #60A5FA;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+      --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.5);
+      --shadow-lg: 0 20px 35px -10px rgba(0,0,0,0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.011em;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      overflow-x: hidden;
+      padding-bottom: 50px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.85);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    [data-theme="dark"] header {
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo-frame {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      border: 1.5px solid var(--card-border);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    .brand-titles h1 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tag-group-logo {
+      font-size: 9px;
+      font-weight: 800;
+      background: rgba(249, 115, 22, 0.12);
+      color: var(--brand-saffron);
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand-titles p {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .live-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: var(--card-subtle);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+    }
+
+    .live-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--brand-green);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulseGreen 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+
+    @keyframes pulseGreen {
+      to { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+
+    .btn-icon {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 17px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-icon:hover {
+      background: var(--card-subtle);
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
+      transform: translateY(-1px);
+    }
+
+    .app-shell {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .hero-banner {
+      background: radial-gradient(120% 120% at 85% 10%, #1E3A8A 0%, #0F172A 60%, #030712 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 30px 36px;
+      color: #FFFFFF;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .hero-meta-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .badge-pill {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-urgent { background: #EF4444; color: #FFFFFF; }
+    .badge-doc { background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); }
+
+    .hero-destination-title {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    .hero-traveller-chip {
+      background: #FFFFFF;
+      color: #0F172A;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .hero-train-strip {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 14px;
+      opacity: 0.94;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .countdown-pod {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .countdown-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94A3B8;
+      margin-bottom: 6px;
+    }
+
+    .countdown-numbers {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      color: #38BDF8;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+    }
+
+    .countdown-footnote {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #34D399;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--brand-blue);
+    }
+
+    .kpi-icon-glow {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      font-size: 24px;
+      color: var(--brand-blue);
+      opacity: 0.8;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .kpi-number {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .kpi-subtext {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+    }
+
+    .map-card-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      height: 580px;
+      position: relative;
+    }
+
+    .map-header-bar {
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      z-index: 10;
+    }
+
+    .map-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .track-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-line {
+      width: 20px;
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      background: #0B1120;
+    }
+
+    .gmap-station-pill {
+      background: #FFFFFF;
+      border: 1.5px solid #0284C7;
+      color: #0F172A;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transform: translate(-50%, -100%);
+      transition: all 0.15s ease;
+    }
+
+    .gmap-station-pill:hover {
+      transform: translate(-50%, -105%) scale(1.08);
+      z-index: 9999;
+    }
+
+    .gmap-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .map-overlay-tools {
+      position: absolute;
+      top: 70px;
+      right: 16px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .map-tool-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: all 0.15s ease;
+    }
+
+    .map-tool-btn:hover {
+      background: var(--card-subtle);
+      color: var(--brand-blue);
+    }
+
+    .side-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .content-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-heading {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rotation-card-inner {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(249, 115, 22, 0.06) 100%);
+      border: 1px solid rgba(2, 132, 199, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .rotation-avatar-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--brand-blue);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    }
+
+    .lane-scroll-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .trip-mini-item {
+      background: var(--card-subtle);
+      border: 1px solid var(--card-border);
+      border-left: 4px solid var(--brand-blue);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .trip-mini-item:hover {
+      transform: translateX(3px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--brand-blue);
+      background: var(--card-bg);
+    }
+
+    .trip-mini-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .trip-mini-dest {
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .trip-mini-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .calendar-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cal-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .cal-filter-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-subtle);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--card-border);
+    }
+
+    .cal-tab-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .cal-tab-btn.active {
+      background: var(--card-bg);
+      color: var(--brand-blue);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cal-grid-layout {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .cal-day-header-cell {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--card-subtle);
+      border-radius: 6px;
+    }
+
+    .cal-date-cell {
+      min-height: 110px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--card-bg);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      position: relative;
+    }
+
+    .cal-date-cell:hover {
+      background: var(--card-subtle);
+      border-color: var(--brand-blue);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cal-date-cell.today-cell {
+      border: 2px solid var(--brand-blue);
+      background: rgba(2, 132, 199, 0.04);
+    }
+
+    .cal-cell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .cal-day-num {
+      font-weight: 700;
+      font-size: 13.5px;
+    }
+
+    .cal-chip-tag {
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.14);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: transform 0.15s ease;
+    }
+
+    .cal-chip-tag:hover {
+      transform: scale(1.03);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .table-container-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .table-filter-bar {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .input-control {
+      background: var(--card-subtle);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font-main);
+    }
+
+    .input-control:focus {
+      border-color: var(--brand-blue);
+      background: var(--card-bg);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--card-subtle);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--card-border);
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: var(--card-subtle);
+    }
+
+    .modal-veil {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 25, 47, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-veil.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      padding: 30px;
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--card-subtle);
+      border: 1px solid var(--card-border);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .toast-tray {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast-msg {
+      background: #0F172A;
+      color: #FFFFFF;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid var(--brand-saffron);
+      animation: slideInToast 0.25s ease;
+    }
+
+    @keyframes slideInToast {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @media (max-width: 1024px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+      .hero-banner { grid-template-columns: 1fr; }
+      .countdown-pod { text-align: left; }
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 10px 16px; }
+      .brand-titles h1 { font-size: 16px; }
+      .brand-titles p { font-size: 10.5px; }
+      .live-pill span { display: none; }
+      .app-shell { padding: 14px; gap: 16px; }
+      .hero-banner { padding: 20px 18px; grid-template-columns: 1fr; gap: 18px; }
+      .hero-destination-title { font-size: 26px; }
+      .hero-train-strip { font-size: 13px; gap: 10px; }
+      .countdown-pod { padding: 16px 18px; text-align: left; display: flex; align-items: center; justify-content: space-between; }
+      .countdown-numbers { font-size: 26px; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .kpi-card { padding: 14px 16px; }
+      .kpi-number { font-size: 24px; }
+      .map-card-wrapper { height: 420px; }
+      .map-header-bar { padding: 12px 16px; flex-direction: column; align-items: flex-start; gap: 8px; }
+      .calendar-container { padding: 16px 14px; }
+      .cal-controls { flex-direction: column; align-items: flex-start; }
+      .cal-filter-tabs { width: 100%; overflow-x: auto; }
+      .cal-date-cell { min-height: 72px; padding: 6px; }
+      .cal-chip-tag span { display: none; }
+      .cal-chip-tag { justify-content: center; padding: 3px; }
+      .table-filter-bar { padding: 12px; gap: 8px; }
+      .input-control { width: 100%; min-width: 100% !important; }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-row { grid-template-columns: 1fr; }
+      .map-card-wrapper { height: 350px; }
+    }
+  </style>
 </head>
-<body>
-  <p>Redirecting to <a href="Index.html">Swift Trip Planner</a>...</p>
+<body data-theme="light">
+
+  <header>
+    <div class="brand-wrap">
+      <div class="brand-logo-frame" title="Swift Strips India Pvt. Ltd. (SLTT Group)">
+        <img src="swift_logo.png" alt="Swift Strips India Logo" class="brand-logo-img" onerror="this.onerror=null; this.src='logo.png';">
+      </div>
+
+      <div class="brand-titles">
+        <h1>Swift Strips India <span class="tag-group-logo">SLTT Group</span></h1>
+        <p>Document & Consignment Travel Planner • Jamshedpur Plant</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="live-pill">
+        <div class="live-pulse"></div>
+        <span id="syncStatus">Live (Syncing)</span>
+      </div>
+      <button class="btn-icon" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme">
+        <i class="ph-bold ph-moon" id="themeIcon"></i>
+      </button>
+      <button class="btn-icon" onclick="fetchData(true)" title="Force Refresh">
+        <i class="ph-bold ph-arrows-clockwise"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+
+    <div class="hero-banner">
+      <div>
+        <div class="hero-meta-top">
+          <span class="badge-pill badge-urgent" id="heroPriority"><i class="ph-bold ph-lightning"></i> URGENT</span>
+          <span class="badge-pill badge-doc" id="heroTripId"><i class="ph-bold ph-ticket"></i> TRP-2026-11-001</span>
+          <span class="badge-pill badge-doc" id="heroDocType"><i class="ph-bold ph-file-text"></i> Customs Clearance</span>
+        </div>
+        <div class="hero-destination-title" id="heroDestination">
+          Kolkata Port (Howrah)
+        </div>
+        <div class="hero-train-strip">
+          <span class="hero-traveller-chip" id="heroTraveller">
+            <i class="ph-fill ph-user-circle" style="color:var(--brand-blue); font-size:18px;"></i> Mohit Saw
+          </span>
+          <span id="heroTrainDetails"><i class="ph-bold ph-train-simple"></i> 12814 Steel Express • Dep: 06:10 IST</span>
+          <span id="heroTicketBadge" class="badge-pill" style="background:#10B981; color:#fff;">TICKET BOOKED</span>
+        </div>
+      </div>
+
+      <div class="countdown-pod">
+        <div class="countdown-eyebrow">DEPARTURE COUNTDOWN</div>
+        <div class="countdown-numbers" id="countdownTimer">01:21:44</div>
+        <div class="countdown-footnote">
+          <i class="ph-bold ph-map-pin"></i> Tatanagar Jn (TATA)
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <i class="ph-bold ph-calendar-check kpi-icon-glow"></i>
+        <div class="kpi-label">This Month Trips</div>
+        <div class="kpi-number" id="kpiMonthTrips">4</div>
+        <div class="kpi-subtext" id="kpiCompletedTrips">2 completed • 1 in transit</div>
+      </div>
+
+      <div class="kpi-card">
+        <i class="ph-bold ph-path kpi-icon-glow"></i>
+        <div class="kpi-label">Total Distance</div>
+        <div class="kpi-number" id="kpiTotalKm">2,080 km</div>
+        <div class="kpi-subtext">SER Mainline + Haldia Branch</div>
+      </div>
+
+      <div class="kpi-card">
+        <i class="ph-bold ph-scales kpi-icon-glow"></i>
+        <div class="kpi-label">Fairness Spread</div>
+        <div class="kpi-number" id="kpiFairnessGap">0.0</div>
+        <div class="kpi-subtext" id="kpiFairnessStatus">Balanced within ±1.0 weight unit</div>
+      </div>
+
+      <div class="kpi-card">
+        <i class="ph-bold ph-users-three kpi-icon-glow"></i>
+        <div class="kpi-label">Active Staff</div>
+        <div class="kpi-number" id="kpiActiveStaff">4</div>
+        <div class="kpi-subtext">Round-robin rotation pool</div>
+      </div>
+    </div>
+
+    <div class="workspace-grid">
+      <div class="map-card-wrapper">
+        <div class="map-header-bar">
+          <div class="map-title">
+            <i class="ph-bold ph-globe-hemisphere-east" style="color:var(--brand-saffron);"></i>
+            <span>3D Rail Corridor: Tatanagar ➔ Kharagpur ➔ Howrah / Haldia</span>
+          </div>
+          <div class="track-legend">
+            <div class="legend-item"><span class="legend-line" style="background:#0284C7;"></span> Howrah Mainline</div>
+            <div class="legend-item"><span class="legend-line" style="background:#F59E0B;"></span> Haldia Dock Line</div>
+          </div>
+        </div>
+        <div id="map"></div>
+        <div class="map-overlay-tools">
+          <button class="map-tool-btn" onclick="resetMapView()" title="Reset Camera"><i class="ph-bold ph-house-line"></i></button>
+          <button class="map-tool-btn" onclick="toggleMapPitch()" title="Toggle 3D Pitch"><i class="ph-bold ph-cube"></i></button>
+        </div>
+      </div>
+
+      <div class="side-stack">
+        <div class="content-card">
+          <div class="card-heading">
+            <span>Next in Rotation</span>
+            <i class="ph-bold ph-arrows-clockwise" style="color:var(--brand-blue);"></i>
+          </div>
+          <div class="rotation-card-inner">
+            <div class="rotation-avatar-circle" id="rotationAvatar">MS</div>
+            <div>
+              <div style="font-weight:700; font-size:16px;" id="rotationName">Mohit Saw</div>
+              <div style="font-size:12px; color:var(--text-muted);" id="rotationSub">Lowest load • Ready for next WhatsApp allotment</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-card" style="flex:1;">
+          <div class="card-heading">
+            <span>Today / Tomorrow Lane</span>
+            <span style="font-size:11px; color:var(--text-muted);" id="laneCount">3 trips</span>
+          </div>
+          <div class="lane-scroll-container" id="laneList">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar-container">
+      <div class="cal-controls">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <i class="ph-bold ph-calendar" style="color:var(--brand-blue); font-size:24px;"></i>
+          <h2 style="font-size:19px; font-weight:800; letter-spacing:-0.02em;" id="calendarMonthTitle">November 2026</h2>
+        </div>
+
+        <div class="cal-filter-tabs">
+          <button class="cal-tab-btn active" onclick="setCalFilter('all', this)">All Trips</button>
+          <button class="cal-tab-btn" onclick="setCalFilter('Kolkata', this)">Kolkata</button>
+          <button class="cal-tab-btn" onclick="setCalFilter('Haldia', this)">Haldia</button>
+          <button class="cal-tab-btn" onclick="setCalFilter('Urgent', this)">Urgent Only</button>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <button class="btn-icon" onclick="changeMonth(-1)"><i class="ph-bold ph-caret-left"></i></button>
+          <button class="btn-icon" onclick="changeMonth(1)"><i class="ph-bold ph-caret-right"></i></button>
+        </div>
+      </div>
+
+      <div class="cal-grid-layout" id="calendarGrid">
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="content-card">
+        <div class="card-heading">Fairness Load Distribution (Per Person)</div>
+        <div style="height:230px;">
+          <canvas id="staffLoadChart"></canvas>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="card-heading">Destinations Share</div>
+        <div style="height:230px;">
+          <canvas id="destDonutChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container-card">
+      <div class="table-filter-bar">
+        <input type="text" class="input-control" id="searchFilter" placeholder="Search traveller, destination, ID..." oninput="applyFilters()" style="min-width:240px;">
+        <select class="input-control" id="staffFilter" onchange="applyFilters()">
+          <option value="">All Staff</option>
+        </select>
+        <select class="input-control" id="destFilter" onchange="applyFilters()">
+          <option value="">All Destinations</option>
+        </select>
+        <select class="input-control" id="statusFilter" onchange="applyFilters()">
+          <option value="">All Statuses</option>
+          <option value="Planned">Planned</option>
+          <option value="Assigned">Assigned</option>
+          <option value="In Transit">In Transit</option>
+          <option value="Reached">Reached</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Returned">Returned</option>
+          <option value="Needs reassignment">Needs reassignment</option>
+        </select>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Trip ID</th>
+              <th>Destination</th>
+              <th>Date</th>
+              <th>Traveller</th>
+              <th>Priority</th>
+              <th>Train</th>
+              <th>Ticket</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tripsTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-veil" id="tripModal" onclick="closeTripModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeTripModal()">&times;</button>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span class="badge-pill" id="modalTripId" style="background:var(--brand-blue); color:#fff;">TRP-2026-11-001</span>
+        <span class="badge-pill badge-urgent" id="modalPriority">URGENT</span>
+      </div>
+      <h2 style="font-size:22px; font-weight:800; margin-bottom:18px;" id="modalTitle">Kolkata Port</h2>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Traveller</div>
+          <div style="font-weight:700; font-size:15px; margin-top:2px;" id="modalTraveller">Mohit Saw</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Date</div>
+          <div style="font-weight:700; font-size:15px; margin-top:2px;" id="modalDate">25-Nov-2026</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Train Details</div>
+          <div style="font-weight:600; font-size:14px; margin-top:2px;" id="modalOnwardTrain">12814 Steel Exp (06:10)</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Ticket Status</div>
+          <div style="font-weight:600; font-size:14px; margin-top:2px;" id="modalTicketStatus">Booked (CC)</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Milestone Timeline</div>
+      <div id="modalTimeline" style="font-size:13px; display:flex; flex-direction:column; gap:10px;">
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-tray" id="toastTray"></div>
+
+  <script>
+    const TATA_TO_HOWRAH_TRACK = [
+      [86.2029, 22.8046],
+      [86.2006, 22.7719],
+      [86.2945, 22.7561],
+      [86.3762, 22.7214],
+      [86.4820, 22.5830],
+      [86.6021, 22.4812],
+      [86.9934, 22.4518],
+      [87.3256, 22.3398],
+      [87.6534, 22.3689],
+      [87.8612, 22.4285],
+      [88.1345, 22.5123],
+      [88.2779, 22.5828],
+      [88.3426, 22.5839],
+      [88.3224, 22.5458]
+    ];
+
+    const KGP_TO_HALDIA_TRACK = [
+      [87.3256, 22.3398],
+      [87.6534, 22.3689],
+      [87.9125, 22.2965],
+      [87.9862, 22.1845],
+      [88.0815, 22.0345],
+      [88.0900, 22.0300]
+    ];
+
+    const REAL_STATIONS = [
+      { name: "Swift Strips Plant", subtitle: "Jamshedpur Base", coords: [86.2029, 22.8046], color: "#EF4444", isBase: true },
+      { name: "Tatanagar Jn (TATA)", subtitle: "Platform 1 • Steel Exp", coords: [86.2006, 22.7719], color: "#0284C7" },
+      { name: "Ghatsila", subtitle: "SER Station", coords: [86.4820, 22.5830], color: "#64748B" },
+      { name: "Kharagpur Jn (KGP)", subtitle: "Main SER Junction", coords: [87.3256, 22.3398], color: "#0284C7" },
+      { name: "Santragachi Jn (SRC)", subtitle: "Express Stop", coords: [88.2779, 22.5828], color: "#0284C7" },
+      { name: "Howrah Jn (HWH)", subtitle: "Terminus (Kolkata)", coords: [88.3426, 22.5839], color: "#0284C7" },
+      { name: "Kolkata Port Area", subtitle: "Customs & Docks", coords: [88.3224, 22.5458], color: "#10B981" },
+      { name: "Haldia Dock Complex", subtitle: "Port Delivery Office", coords: [88.0900, 22.0300], color: "#F59E0B" }
+    ];
+
+    let appData = {
+      trips: [],
+      destinations: [],
+      stations: [],
+      staff: [],
+      nextInRotation: '',
+      mapboxToken: ''
+    };
+    let currentCalMonth = new Date().getMonth();
+    let currentCalYear = new Date().getFullYear();
+    let calFilterMode = 'all';
+    let map = null;
+    let mapType = 'none';
+    let countdownInterval = null;
+    let staffChart = null;
+    let destChart = null;
+
+    if (typeof google === 'undefined' || !google.script || !google.script.run) {
+      window.google = {
+        script: {
+          run: {
+            withSuccessHandler: function(cb) { this._cb = cb; return this; },
+            withFailureHandler: function(fcb) { this._fcb = fcb; return this; },
+            getPublicData: function() {
+              setTimeout(() => { if (this._cb) this._cb(generateMockData()); }, 200);
+            }
+          }
+        }
+      };
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchData(false);
+      setInterval(() => fetchData(false), 60000);
+    });
+
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('themeIcon').className = isDark ? 'ph-bold ph-moon' : 'ph-bold ph-sun';
+      if (staffChart) staffChart.update();
+      if (destChart) destChart.update();
+    }
+
+    function fetchData(forceToast) {
+      document.getElementById('syncStatus').innerText = "Syncing...";
+      google.script.run
+        .withSuccessHandler((data) => {
+          document.getElementById('syncStatus').innerText = "Live";
+          const prevCount = appData.trips ? appData.trips.length : 0;
+          appData = data;
+          if (forceToast) showToast("Updated data from Google Sheet");
+          if (prevCount > 0 && data.trips.length > prevCount) {
+            const latest = data.trips[data.trips.length - 1];
+            showToast(`New trip allotted: ${latest.assignedTo} -> ${latest.destination}`);
+          }
+          renderApp();
+        })
+        .withFailureHandler((err) => {
+          document.getElementById('syncStatus').innerText = "Stale (Offline)";
+          showToast("Sync paused - showing cached records");
+        })
+        .getPublicData();
+    }
+
+    function renderApp() {
+      renderHero();
+      renderKPIs();
+      renderRotation();
+      renderLane();
+      renderCalendar();
+      renderCharts();
+      populateDropdowns();
+      applyFilters();
+      initHighGraphicsMap();
+    }
+
+    function renderHero() {
+      if (!appData.trips || appData.trips.length === 0) return;
+      const t = appData.trips[0];
+      document.getElementById('heroTripId').innerText = t.tripId;
+      document.getElementById('heroDestination').innerText = t.destination;
+      document.getElementById('heroPriority').innerText = t.priority.toUpperCase();
+      document.getElementById('heroDocType').innerText = t.docType || 'Document';
+      document.getElementById('heroTraveller').innerHTML = `<i class="ph-fill ph-user-circle" style="color:var(--brand-blue); font-size:18px;"></i> ${t.assignedTo}`;
+      document.getElementById('heroTrainDetails').innerHTML = `<i class="ph-bold ph-train-simple"></i> ${t.onwardTrainNo} ${t.onwardTrainName} • Dep: 06:10 IST`;
+      document.getElementById('heroTicketBadge').innerText = t.ticketStatus.toUpperCase();
+
+      if (countdownInterval) clearInterval(countdownInterval);
+      const target = t.onwardDepDateTime ? new Date(t.onwardDepDateTime) : new Date(t.startDate + 'T06:10:00');
+
+      function tick() {
+        const diff = target.getTime() - new Date().getTime();
+        if (diff <= 0) {
+          document.getElementById('countdownTimer').innerText = "DEPARTED";
+          return;
+        }
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        document.getElementById('countdownTimer').innerText = 
+          `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+      tick();
+      countdownInterval = setInterval(tick, 1000);
+    }
+
+    function renderKPIs() {
+      const trips = appData.trips || [];
+      document.getElementById('kpiMonthTrips').innerText = trips.length;
+      const completed = trips.filter(t => t.status === 'Delivered' || t.status === 'Returned').length;
+      const inTransit = trips.filter(t => t.status === 'In Transit').length;
+      document.getElementById('kpiCompletedTrips').innerText = `${completed} completed • ${inTransit} in transit`;
+      document.getElementById('kpiTotalKm').innerText = `${(trips.length * 520).toLocaleString()} km`;
+      document.getElementById('kpiActiveStaff').innerText = appData.staff.filter(s => s.active).length;
+    }
+
+    function renderRotation() {
+      const nextName = appData.nextInRotation || 'Mohit Saw';
+      document.getElementById('rotationName').innerText = nextName;
+      document.getElementById('rotationAvatar').innerText = nextName.split(' ').map(n=>n[0]).join('').slice(0,2);
+    }
+
+    function renderLane() {
+      const container = document.getElementById('laneList');
+      container.innerHTML = '';
+      const trips = (appData.trips || []).slice(0, 5);
+      document.getElementById('laneCount').innerText = `${trips.length} upcoming`;
+
+      trips.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'trip-mini-item';
+        item.style.borderLeftColor = t.staffColour || '#0284C7';
+        item.onclick = () => openTripModal(t);
+
+        item.innerHTML = `
+          <div class="trip-mini-top">
+            <span class="trip-mini-dest">${t.destination}</span>
+            <span class="badge-pill" style="background:rgba(2,132,199,0.12); color:var(--brand-blue);">${t.status}</span>
+          </div>
+          <div class="trip-mini-meta">
+            <span><i class="ph-bold ph-user"></i> ${t.assignedTo}</span>
+            <span><i class="ph-bold ph-calendar"></i> ${t.startDate}</span>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function setCalFilter(mode, btn) {
+      calFilterMode = mode;
+      document.querySelectorAll('.cal-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      dayNames.forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'cal-day-header-cell';
+        h.innerText = d;
+        grid.appendChild(h);
+      });
+
+      const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
+      const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      document.getElementById('calendarMonthTitle').innerText = `${monthNames[currentCalMonth]} ${currentCalYear}`;
+
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.style.background = 'transparent';
+        grid.appendChild(empty);
+      }
+
+      const today = new Date();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-date-cell';
+        if (today.getDate() === day && today.getMonth() === currentCalMonth && today.getFullYear() === currentCalYear) {
+          cell.classList.add('today-cell');
+        }
+
+        cell.innerHTML = `
+          <div class="cal-cell-header">
+            <span class="cal-day-num">${day}</span>
+          </div>
+        `;
+        const dateStr = `${String(day).padStart(2, '0')}-${monthNames[currentCalMonth].slice(0, 3)}-${currentCalYear}`;
+        
+        let dayTrips = (appData.trips || []).filter(t => t.startDate && t.startDate.toLowerCase() === dateStr.toLowerCase());
+
+        if (calFilterMode === 'Kolkata') dayTrips = dayTrips.filter(t => t.destination.includes('Kolkata'));
+        else if (calFilterMode === 'Haldia') dayTrips = dayTrips.filter(t => t.destination.includes('Haldia'));
+        else if (calFilterMode === 'Urgent') dayTrips = dayTrips.filter(t => t.priority === 'Urgent');
+
+        dayTrips.forEach(dt => {
+          const chip = document.createElement('div');
+          chip.className = 'cal-chip-tag';
+          chip.style.backgroundColor = dt.staffColour || '#0284C7';
+          chip.innerHTML = `
+            <i class="ph-bold ph-train" style="font-size:11px;"></i>
+            <span>${dt.assignedTo.split(' ')[0]}: ${dt.destination}</span>
+          `;
+          chip.onclick = (e) => { e.stopPropagation(); openTripModal(dt); };
+          cell.appendChild(chip);
+        });
+
+        cell.onclick = () => {
+          document.getElementById('searchFilter').value = dateStr;
+          applyFilters();
+        };
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function changeMonth(offset) {
+      currentCalMonth += offset;
+      if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
+      if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; }
+      renderCalendar();
+    }
+
+    function renderCharts() {
+      const staffCtx = document.getElementById('staffLoadChart');
+      if (staffCtx) {
+        const staffNames = appData.staff.map(s => s.name);
+        const loads = staffNames.map(name => appData.trips.filter(t => t.assignedTo === name && t.status !== 'Cancelled').length);
+
+        if (staffChart) staffChart.destroy();
+        staffChart = new Chart(staffCtx, {
+          type: 'bar',
+          data: {
+            labels: staffNames.map(n => n.split(' ')[0]),
+            datasets: [{
+              label: 'Trips Assigned',
+              data: loads,
+              backgroundColor: ['#0284C7', '#10B981', '#F97316', '#8B5CF6'],
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+          }
+        });
+      }
+
+      const destCtx = document.getElementById('destDonutChart');
+      if (destCtx) {
+        const destCounts = {};
+        appData.trips.forEach(t => { destCounts[t.destination] = (destCounts[t.destination] || 0) + 1; });
+
+        if (destChart) destChart.destroy();
+        destChart = new Chart(destCtx, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(destCounts),
+            datasets: [{
+              data: Object.values(destCounts),
+              backgroundColor: ['#0284C7', '#10B981', '#F97316', '#6366F1']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      }
+    }
+
+    function populateDropdowns() {
+      const staffSel = document.getElementById('staffFilter');
+      const destSel = document.getElementById('destFilter');
+      if (staffSel.options.length <= 1) {
+        appData.staff.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.name;
+          opt.innerText = s.name;
+          staffSel.appendChild(opt);
+        });
+      }
+      if (destSel.options.length <= 1) {
+        appData.destinations.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.name;
+          opt.innerText = d.name;
+          destSel.appendChild(opt);
+        });
+      }
+    }
+
+    function applyFilters() {
+      const q = document.getElementById('searchFilter').value.toLowerCase();
+      const staffVal = document.getElementById('staffFilter').value;
+      const destVal = document.getElementById('destFilter').value;
+      const statusVal = document.getElementById('statusFilter').value;
+
+      const filtered = (appData.trips || []).filter(t => {
+        const mQ = !q || t.tripId.toLowerCase().includes(q) || t.destination.toLowerCase().includes(q) || t.assignedTo.toLowerCase().includes(q);
+        const mS = !staffVal || t.assignedTo === staffVal;
+        const mD = !destVal || t.destination === destVal;
+        const mSt = !statusVal || t.status === statusVal;
+        return mQ && mS && mD && mSt;
+      });
+
+      const tbody = document.getElementById('tripsTableBody');
+      tbody.innerHTML = '';
+
+      filtered.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family:var(--font-mono); font-weight:700;">${t.tripId}</td>
+          <td><strong>${t.destination}</strong></td>
+          <td>${t.startDate}</td>
+          <td>
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${t.staffColour}; margin-right:6px;"></span>
+            ${t.assignedTo}
+          </td>
+          <td><span class="badge-pill ${t.priority === 'Urgent' ? 'badge-urgent' : 'badge-doc'}">${t.priority}</span></td>
+          <td>${t.onwardTrainNo}</td>
+          <td>${t.ticketStatus}</td>
+          <td><span class="badge-pill" style="background:rgba(2,132,199,0.1); color:var(--brand-blue);">${t.status}</span></td>
+          <td>
+            <button class="btn-icon" style="width:28px; height:28px; font-size:12px;" onclick='openTripModal(${JSON.stringify(t)})'><i class="ph-bold ph-eye"></i></button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function initHighGraphicsMap() {
+      if (appData.mapboxToken && typeof mapboxgl !== 'undefined') {
+        try {
+          if (!map || mapType !== 'mapbox') {
+            mapboxgl.accessToken = appData.mapboxToken;
+            map = new mapboxgl.Map({
+              container: 'map',
+              style: 'mapbox://styles/mapbox/satellite-streets-v12',
+              center: [87.4, 22.45],
+              zoom: 7.6,
+              pitch: 58,
+              bearing: -12
+            });
+
+            map.on('style.load', () => {
+              map.addSource('mapbox-dem', {
+                'type': 'raster-dem',
+                'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                'tileSize': 512,
+                'maxzoom': 14
+              });
+              map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.4 });
+
+              map.addLayer({
+                'id': 'sky',
+                'type': 'sky',
+                'paint': {
+                  'sky-type': 'atmosphere',
+                  'sky-atmosphere-sun': [0.0, 90.0],
+                  'sky-atmosphere-sun-intensity': 15
+                }
+              });
+
+              map.addSource('hwh-rail-track', {
+                'type': 'geojson',
+                'data': { 'type': 'Feature', 'geometry': { 'type': 'LineString', 'coordinates': TATA_TO_HOWRAH_TRACK } }
+              });
+
+              map.addSource('hlz-rail-track', {
+                'type': 'geojson',
+                'data': { 'type': 'Feature', 'geometry': { 'type': 'LineString', 'coordinates': KGP_TO_HALDIA_TRACK } }
+              });
+
+              map.addLayer({
+                'id': 'hwh-track-line',
+                'type': 'line',
+                'source': 'hwh-rail-track',
+                'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                'paint': { 'line-color': '#0284C7', 'line-width': 4.5, 'line-dasharray': [2, 1] }
+              });
+
+              map.addLayer({
+                'id': 'hlz-track-line',
+                'type': 'line',
+                'source': 'hlz-rail-track',
+                'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                'paint': { 'line-color': '#F59E0B', 'line-width': 4.5, 'line-dasharray': [2, 1] }
+              });
+
+              REAL_STATIONS.forEach(s => {
+                const el = document.createElement('div');
+                el.className = 'gmap-station-pill';
+                el.innerHTML = `
+                  <div class="gmap-dot" style="background:${s.color};"></div>
+                  <span>${s.name}</span>
+                `;
+                new mapboxgl.Marker({ element: el })
+                  .setLngLat(s.coords)
+                  .addTo(map);
+              });
+            });
+
+            mapType = 'mapbox';
+            return;
+          }
+        } catch (e) {
+          console.warn("Mapbox fallback to Leaflet:", e);
+        }
+      }
+
+      if (!map || mapType !== 'leaflet') {
+        document.getElementById('map').innerHTML = '';
+        map = L.map('map').setView([22.45, 87.35], 8);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Esri Satellite Rail View',
+          maxZoom: 18
+        }).addTo(map);
+
+        const leafHwhTrack = TATA_TO_HOWRAH_TRACK.map(c => [c[1], c[0]]);
+        const leafHlzTrack = KGP_TO_HALDIA_TRACK.map(c => [c[1], c[0]]);
+
+        L.polyline(leafHwhTrack, { color: '#0F172A', weight: 6, opacity: 0.6 }).addTo(map);
+        L.polyline(leafHwhTrack, { color: '#0284C7', weight: 3.5, dashArray: '8, 6' }).addTo(map);
+
+        L.polyline(leafHlzTrack, { color: '#78350F', weight: 6, opacity: 0.6 }).addTo(map);
+        L.polyline(leafHlzTrack, { color: '#F59E0B', weight: 3.5, dashArray: '8, 6' }).addTo(map);
+
+        REAL_STATIONS.forEach(s => {
+          const customIcon = L.divIcon({
+            className: 'gmap-leaflet-wrapper',
+            html: `
+              <div class="gmap-station-pill" style="border-color:${s.color};">
+                <div class="gmap-dot" style="background:${s.color};"></div>
+                <span>${s.name}</span>
+              </div>
+            `,
+            iconSize: [120, 30],
+            iconAnchor: [60, 15]
+          });
+
+          L.marker([s.coords[1], s.coords[0]], { icon: customIcon })
+            .addTo(map)
+            .bindPopup(`<b>${s.name}</b><br><small>${s.subtitle}</small>`);
+        });
+
+        mapType = 'leaflet';
+      }
+    }
+
+    function resetMapView() {
+      if (mapType === 'mapbox' && map) map.flyTo({ center: [87.4, 22.45], zoom: 7.6, pitch: 58 });
+      else if (mapType === 'leaflet' && map) map.setView([22.45, 87.35], 8);
+    }
+
+    function toggleMapPitch() {
+      if (mapType === 'mapbox' && map) map.easeTo({ pitch: map.getPitch() > 20 ? 0 : 58 });
+    }
+
+    function openTripModal(t) {
+      document.getElementById('modalTripId').innerText = t.tripId;
+      document.getElementById('modalPriority').innerText = t.priority.toUpperCase();
+      document.getElementById('modalTitle').innerText = `${t.destination} (${t.docType || 'Document'})`;
+      document.getElementById('modalTraveller').innerText = t.assignedTo;
+      document.getElementById('modalDate').innerText = t.startDate;
+      document.getElementById('modalOnwardTrain').innerText = `${t.onwardTrainNo} ${t.onwardTrainName}`;
+      document.getElementById('modalTicketStatus').innerText = `${t.ticketStatus} (${t.travelClass || 'CC'})`;
+
+      document.getElementById('modalTimeline').innerHTML = `
+        <div><i class="ph-bold ph-check-circle" style="color:#10B981;"></i> <strong>Requested:</strong> ${t.source} (${t.lastUpdated})</div>
+        <div><i class="ph-bold ph-check-circle" style="color:#10B981;"></i> <strong>Assigned:</strong> ${t.assignedTo} (Mode: ${t.assignMode})</div>
+        <div><i class="ph-bold ${t.ticketStatus === 'Booked' ? 'ph-check-circle' : 'ph-clock'}" style="color:${t.ticketStatus === 'Booked' ? '#10B981' : '#F59E0B'};"></i> <strong>Ticket Status:</strong> ${t.ticketStatus}</div>
+        <div><i class="ph-bold ph-circle" style="color:var(--text-muted);"></i> <strong>Current Status:</strong> ${t.status}</div>
+      `;
+
+      document.getElementById('tripModal').classList.add('open');
+    }
+
+    function closeTripModal() {
+      document.getElementById('tripModal').classList.remove('open');
+    }
+
+    function showToast(msg) {
+      const tray = document.getElementById('toastTray');
+      const toast = document.createElement('div');
+      toast.className = 'toast-msg';
+      toast.innerHTML = `<i class="ph-fill ph-bell-ringing" style="color:var(--brand-saffron); font-size:18px;"></i> <span>${msg}</span>`;
+      tray.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    function generateMockData() {
+      return {
+        trips: [
+          {
+            tripId: "TRP-2026-11-001",
+            purpose: "Customs & Port clearances",
+            docType: "Customs",
+            destination: "Kolkata Port",
+            startDate: "25-Nov-2026",
+            endDate: "25-Nov-2026",
+            priority: "Urgent",
+            assignedTo: "Mohit Saw",
+            staffColour: "#0284C7",
+            assignMode: "AUTO",
+            status: "In Transit",
+            travelMode: "Train",
+            fromStation: "TATA",
+            toStation: "HWH",
+            onwardTrainNo: "12814",
+            onwardTrainName: "Steel Express",
+            onwardDepDateTime: "2026-11-25T06:10:00",
+            ticketStatus: "Booked",
+            travelClass: "CC",
+            source: "WHATSAPP",
+            lastUpdated: "2026-11-24T12:00:00"
+          },
+          {
+            tripId: "TRP-2026-11-002",
+            purpose: "Bank Guarantee submission",
+            docType: "Bank",
+            destination: "Kolkata",
+            startDate: "26-Nov-2026",
+            endDate: "26-Nov-2026",
+            priority: "Normal",
+            assignedTo: "Dablu Pandit",
+            staffColour: "#10B981",
+            assignMode: "AUTO",
+            status: "Assigned",
+            travelMode: "Train",
+            fromStation: "TATA",
+            toStation: "HWH",
+            onwardTrainNo: "12814",
+            onwardTrainName: "Steel Express",
+            onwardDepDateTime: "2026-11-26T06:10:00",
+            ticketStatus: "Booked",
+            travelClass: "CC",
+            source: "SHEET",
+            lastUpdated: "2026-11-24T12:00:00"
+          },
+          {
+            tripId: "TRP-2026-11-003",
+            purpose: "Plant consignment LC delivery",
+            docType: "LC",
+            destination: "Haldia",
+            startDate: "28-Nov-2026",
+            endDate: "28-Nov-2026",
+            priority: "Normal",
+            assignedTo: "Suraj Kumar",
+            staffColour: "#F97316",
+            assignMode: "AUTO",
+            status: "Planned",
+            travelMode: "Train",
+            fromStation: "TATA",
+            toStation: "HLZ",
+            onwardTrainNo: "18616",
+            onwardTrainName: "Kriya Yoga Exp",
+            onwardDepDateTime: "2026-11-28T07:15:00",
+            ticketStatus: "Not booked",
+            travelClass: "3A",
+            source: "WHATSAPP",
+            lastUpdated: "2026-11-24T12:00:00"
+          },
+          {
+            tripId: "TRP-2026-11-004",
+            purpose: "Dock clearance verification",
+            docType: "Customs",
+            destination: "Haldia Dock",
+            startDate: "30-Nov-2026",
+            endDate: "30-Nov-2026",
+            priority: "Normal",
+            assignedTo: "Abhinas",
+            staffColour: "#8B5CF6",
+            assignMode: "AUTO",
+            status: "Planned",
+            travelMode: "Train",
+            fromStation: "TATA",
+            toStation: "HLZ",
+            onwardTrainNo: "18616",
+            onwardTrainName: "Kriya Yoga Exp",
+            onwardDepDateTime: "2026-11-30T07:15:00",
+            ticketStatus: "Not booked",
+            travelClass: "CC",
+            source: "SHEET",
+            lastUpdated: "2026-11-24T12:00:00"
+          }
+        ],
+        destinations: [
+          { name: "Kolkata", lat: 22.5726, lng: 88.3639, roadKm: 250, weight: 1.0 },
+          { name: "Haldia", lat: 22.0667, lng: 88.0698, roadKm: 260, weight: 1.2 },
+          { name: "Kolkata Port", lat: 22.5458, lng: 88.3224, roadKm: 255, weight: 1.3 },
+          { name: "Haldia Dock", lat: 22.0300, lng: 88.0900, roadKm: 265, weight: 1.3 }
+        ],
+        stations: [
+          { code: "TATA", name: "Tatanagar Jn", city: "Jamshedpur", lat: 22.7719, lng: 86.2006 },
+          { code: "KGP", name: "Kharagpur Jn", city: "Kharagpur", lat: 22.3398, lng: 87.3256 },
+          { code: "HWH", name: "Howrah Jn", city: "Kolkata", lat: 22.5839, lng: 88.3426 },
+          { code: "SRC", name: "Santragachi Jn", city: "Howrah", lat: 22.5828, lng: 88.2779 }
+        ],
+        staff: [
+          { name: "Mohit Saw", role: "Staff", active: true, colour: "#0284C7" },
+          { name: "Dablu Pandit", role: "Staff", active: true, colour: "#10B981" },
+          { name: "Suraj Kumar", role: "Staff", active: true, colour: "#F97316" },
+          { name: "Abhinas", role: "Staff", active: true, colour: "#8B5CF6" }
+        ],
+        nextInRotation: "Mohit Saw",
+        mapboxToken: "",
+        workingDays: "Mon,Tue,Wed,Thu,Fri,Sat",
+        timestamp: new Date().toISOString()
+      };
+    }
+  </script>
 </body>
 </html>
