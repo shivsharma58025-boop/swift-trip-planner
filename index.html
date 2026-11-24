@@ -3358,16 +3358,18 @@
     }
 
     /* ==========================================================================
-       WHATSAPP REQUEST FAB (C5)
-       ========================================================================== */
+   WHATSAPP REQUEST FAB (C5)
+   ========================================================================== */
     function renderWhatsAppFAB() {
       const fab = document.getElementById('waRequestFab');
-      const num = (appData.config && appData.config.whatsappRequestNumber) ? appData.config.whatsappRequestNumber.replace(/[^0-9]/g, '') : '';
-      if (!num) {
-        fab.style.display = 'none';
-        return;
-      }
+      // Automation WhatsApp Number: 76670 72017 (India Country Code: 91)
+      const automationNumber = "917667072017";
+      const num = (appData.config && appData.config.whatsappRequestNumber)
+        ? appData.config.whatsappRequestNumber.replace(/[^0-9]/g, '')
+        : automationNumber;
+
       const todayStr = dayKeyIST(new Date());
+      // Prefilled command message for n8n / webhook automation parser
       fab.href = `https://wa.me/${num}?text=${encodeURIComponent("Kolkata " + todayStr)}`;
       fab.style.display = 'flex';
     }
